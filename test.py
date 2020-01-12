@@ -10,11 +10,12 @@ import threading
 import requests
 
 # 现货
-# # result = SpotApi.get_kline('BTC-USDT')
+# result = SpotApi.get_kline('BTC-USDT')
 # result = SpotApi.get_kline(instrument_id='BTC-USDT', start='2020-01-03T15:03:00.000Z', end='2020-01-03T15:07:00.000Z')
-#
-# for item in result:
-#     print(item)
+result = SpotApi.get_kline(instrument_id='BTC-USDT', start='2020-01-12T08:52:00.000Z')
+
+for item in result:
+    print(item)
 
 # 合约
 # result = SwapApi.get_kline('BTC-USD-SWAP')
