@@ -78,6 +78,10 @@ df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 df['ma7'] = df['close'].rolling(7, min_periods=1).mean()
 df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
 
+# macd
+df['ema1'] = 0
+df['ema1'] = df['close'] * 2 + (12 - 1) * df['ema1'].shift(-1) / (12 + 1)
+df['ema1'].fillna(method='ffill', inplace=True)
 print(df)
 
 
