@@ -79,9 +79,36 @@ df['ma7'] = df['close'].rolling(7, min_periods=1).mean()
 df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
 
 # macd
-df['ema1'] = 0
-df['ema1'] = df['close'] * 2 + (12 - 1) * df['ema1'].shift(-1) / (12 + 1)
-df['ema1'].fillna(method='ffill', inplace=True)
-print(df)
+# df['ema12'] = df['close'].shift(1) + (df['close'] - df['close'].shift(1)) * 2 / (12 + 1)
+# df['ema26'] = df['close'].shift(1) + (df['close'] - df['close'].shift(1)) * 2 / (26 + 1)
+
+# 先复制第一行的ema12和ema26为收盘价（shift(1)：上一条）
+df['ema12'] = 0
+df['ema26'] = 0
+# 先初始化第一行ema12和ema26
+df.at[0, 'ema12'] = df.at[0, 'close']
+df.at[0, 'ema26'] = df.at[0, 'close']
+# 后面从第二行开始计算
+
+for index, row in df.iterrows():
+
+    if index == 0:
+        prev_ema12 = row['ema12']
+        prev_ema26 = row['ema26']
+    else:
+        # todo
+        pass
+    exit()
+
+# df.loc[df['ema12'] == 0, 'ema12'] = (df['close'] * 2 + (12 - 1) * df['ema12'].shift(1)) / (12 + 1)
+# df.loc[df['ema26'] == 0, 'ema26'] = (df['close'] * 2 + (26 - 1) * df['ema26'].shift(1)) / (26 + 1)
+print(df[['candle_begin_time', 'close', 'ema12', 'ema26']])
+exit()
+
+df['diff']  = df['ema12'] - df['ema26']
+df['dea']   = df['diff'].rolling(9, min_periods=1).mean()
+# macd柱线
+df['macd_bar']  = (df['diff'] - df['dea']) * 2
+print(df[['candle_begin_time', 'close', 'ma7', 'ma30', 'ema12', 'ema26', 'diff', 'dea', 'macd_bar']])
 
 
