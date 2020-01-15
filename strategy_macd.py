@@ -102,7 +102,7 @@ df['macd_bar']  = (df['dif'] - df['dea']) * 2
 # df['vma10'] = df['volume'].rolling(10, min_periods=1).mean()
 
 # BOLL指标
-n = 100     # 中轨n根K线的移动平均线
+n = 20     # 中轨n根K线的移动平均线
 m = 2       # 系数
 # 计算中轨
 df['median'] = df['close'].rolling(n, min_periods=1).mean()
