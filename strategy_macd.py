@@ -112,12 +112,15 @@ df['std'] = df['close'].rolling(n, min_periods=1).std(ddof=0)  # ddof 标准差�
 df['upper'] = df['median'] + m * df['std']
 # 计算下轨
 df['lower'] = df['median'] - m * df['std']
-print(df[['candle_begin_time', 'close', 'median', 'std', 'upper', 'lower']])
-exit()
-# RSI 指标
+# print(df[['candle_begin_time', 'close', 'median', 'std', 'upper', 'lower']])
+# exit()
+
+# RSI指标
 # df['rsi1']
 # df['rsi2']
 # df['rsi3']
+
+# KDJ指标
 
 # print(df.tail(40))
 # exit()
@@ -134,8 +137,9 @@ dif_cond2 = df['dif'].shift(1) <= df['dea'].shift(1)
 bar_cond1 = df['macd_bar'] > df['macd_bar'].shift(1)
 bar_cond2 = df['macd_bar'] > 0
 bar_cond3 = df['macd_bar'].shift(1) <= 0
-
-df.loc[dif_cond1 & dif_cond2 & bar_cond1 & bar_cond2 & bar_cond3 , 'signal'] = 1
+# K线收盘价在布林线中轨的下方
+boll_cond1 = df['close'] < df['median']
+df.loc[dif_cond1 & dif_cond2 & bar_cond1 & bar_cond2 & bar_cond3 & boll_cond1 , 'signal'] = 1
 
 # 过滤虚假的做多信号
 # 往前推3个小时（如果是5分钟K线，就是36根K线），判断当前K线处在什么位置
