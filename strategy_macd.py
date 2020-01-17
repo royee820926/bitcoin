@@ -80,6 +80,7 @@ df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
 df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
 df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
+df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
 
 # 先复制第一行的ema12和ema26为收盘价（shift(1)：上一条）
 # 后面从第二行开始计算
@@ -89,11 +90,12 @@ for index, row in df.iterrows():
         prev_ema12 = df.at[0, 'ema12'] = df.at[0, 'close']
         prev_ema26 = df.at[0, 'ema26'] = df.at[0, 'close']
     else:
+
         prev_ema12 = df.at[index, 'ema12'] = (row['close'] * 2 + (12 - 1) * prev_ema12) / (12 + 1)
         prev_ema26 = df.at[index, 'ema26'] = (row['close'] * 2 + (26 - 1) * prev_ema26) / (26 + 1)
 
-df['dif']  = df['ema12'] - df['ema26']
-df['dea']   = df['dif'].rolling(9, min_periods=1).mean()
+df['dif'] = df['ema12'] - df['ema26']
+df['dea'] = df['dif'].rolling(9, min_periods=1).mean()
 # macd柱线
 df['macd_bar']  = (df['dif'] - df['dea']) * 2
 
@@ -115,6 +117,20 @@ df['lower'] = df['median'] - m * df['std']
 # print(df[['candle_begin_time', 'close', 'median', 'std', 'upper', 'lower']])
 # exit()
 
+# OBV指标（能量潮）
+# for index, row in df.iterrows():
+#     if index == 0:
+#         prev_obv = df.at[0, 'obv'] = 0
+#     else:
+#         if df.at[index, 'close'] > prev_obv:
+#             prev_obv = df.at[index, 'obv'] = prev_obv + df.at[index, 'volume']
+#         elif df.at[index, 'close'] < prev_obv:
+#             prev_obv = df.at[index, 'obv'] = prev_obv - df.at[index, 'volume']
+#         else:
+#             prev_obv = df.at[index, 'obv'] = prev_obv
+# print(df.tail(40))
+# exit()
+
 # RSI指标
 # df['rsi1']
 # df['rsi2']
@@ -129,31 +145,37 @@ df['lower'] = df['median'] - m * df['std']
 # exit()
 
 # ==== 标记信号 ====
-# 做多信号
+# [2：做多、1：做多平仓、-2：做空、-1：做空平仓]
+
+# 做多信号1
 # DIF上穿DEA
-dif_cond1 = df['dif'] > df['dea']
-dif_cond2 = df['dif'].shift(1) <= df['dea'].shift(1)
-# MACD由负变正
-bar_cond1 = df['macd_bar'] > df['macd_bar'].shift(1)
-bar_cond2 = df['macd_bar'] > 0
-bar_cond3 = df['macd_bar'].shift(1) <= 0
-# K线收盘价在布林线中轨的下方
-boll_cond1 = df['close'] < df['median']
-df.loc[dif_cond1 & dif_cond2 & bar_cond1 & bar_cond2 & bar_cond3 & boll_cond1 , 'signal'] = 1
+# dif_cond1 = df['dif'] > df['dea']
+# dif_cond2 = df['dif'].shift(1) <= df['dea'].shift(1)
+# # MACD由负变正
+# bar_cond1 = df['macd_bar'] > df['macd_bar'].shift(1)
+# bar_cond2 = df['macd_bar'] > 0
+# bar_cond3 = df['macd_bar'].shift(1) <= 0
+# # K线收盘价在布林线中轨的下方
+# boll_cond1 = df['close'] < df['median']
+# df.loc[dif_cond1 & dif_cond2 & bar_cond1 & bar_cond2 & bar_cond3 & boll_cond1 , 'signal_up'] = 2
 
-# 过滤虚假的做多信号
-# 往前推3个小时（如果是5分钟K线，就是36根K线），判断当前K线处在什么位置
-back_minutes = 180
-kline_length = back_minutes / kline_rule
+# 做多信号2(recommend)
+# dif从下往上接近dea
+dif_cond1 = df['dif'] < df['dea']
+dif_cond2 = df['dea'] - df['dif'] < 0.002
+dif_cond3 = df['dif'].shift(1) < df['dea'].shift(1)
+line_cond1 = df['close'] < df['ma60']
+df.loc[dif_cond1 & dif_cond2 & dif_cond3 & line_cond1, 'signal_up'] = 2
 
-temp = df[df['signal'] == 1]
-for index, row in temp.iterrows():
-    if index < kline_length:
-        continue
+# print(df[['candle_begin_time', 'close', 'ma60', 'dif', 'dea', 'macd_bar', 'signal_up']])
+# exit()
 
-print(temp)
-exit()
 # 做空
+dif_cond1 = df['dif'] < df['dif'].shift(1)
+dif_cond2 = df['dif'].shift(1) > df['dif'].shift(2)
+df.loc[dif_cond1 & dif_cond2, 'signal_dn'] = -2
+print(df[['candle_begin_time', 'close', 'ma60', 'dif', 'dea', 'macd_bar', 'signal_up', 'signal_dn']])
+exit()
 
 # 做多平仓
 # 做空平仓
