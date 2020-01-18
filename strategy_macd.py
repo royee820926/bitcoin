@@ -164,11 +164,15 @@ df['lower'] = df['median'] - m * df['std']
 dif_cond1 = df['dif'] < df['dea']
 dif_cond2 = df['dea'] - df['dif'] < 0.002
 dif_cond3 = df['dif'].shift(1) < df['dea'].shift(1)
+# macd柱线由弱转强，柱线图向下深度连续两根小于-0.015
+macd_cond1 = df['macd_bar'] > df['macd_bar'].shift(1)
+macd_cond2 = df['macd_bar'].shift(1) < df['macd_bar'].shift(2)
+macd_cond3 = df['macd_bar'].shift(2) < -0.015
 line_cond1 = df['close'] < df['ma60']
-df.loc[dif_cond1 & dif_cond2 & dif_cond3 & line_cond1, 'signal_up'] = 2
+df.loc[((dif_cond1 & dif_cond2 & dif_cond3) | (macd_cond1 & macd_cond2 & macd_cond3)) & line_cond1, 'signal_up'] = 2
 
-# print(df[['candle_begin_time', 'close', 'ma60', 'dif', 'dea', 'macd_bar', 'signal_up']])
-# exit()
+print(df[['candle_begin_time', 'close', 'ma60', 'dif', 'dea', 'macd_bar', 'signal_up']])
+exit()
 
 # 做空
 dif_cond1 = df['dif'] < df['dif'].shift(1)
