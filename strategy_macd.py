@@ -160,18 +160,57 @@ df['lower'] = df['median'] - m * df['std']
 # df.loc[dif_cond1 & dif_cond2 & bar_cond1 & bar_cond2 & bar_cond3 & boll_cond1 , 'signal_up'] = 2
 
 # 做多信号2(recommend)
-# dif从下往上接近dea
-dif_cond1 = df['dif'] < df['dea']
-dif_cond2 = df['dea'] - df['dif'] < 0.002
-dif_cond3 = df['dif'].shift(1) < df['dea'].shift(1)
-# macd柱线由弱转强，柱线图向下深度连续两根小于-0.015
-macd_cond1 = df['macd_bar'] > df['macd_bar'].shift(1)
-macd_cond2 = df['macd_bar'].shift(1) < df['macd_bar'].shift(2)
-macd_cond3 = df['macd_bar'].shift(2) < -0.015
-line_cond1 = df['close'] < df['ma60']
-df.loc[((dif_cond1 & dif_cond2 & dif_cond3) | (macd_cond1 & macd_cond2 & macd_cond3)) & line_cond1, 'signal_up'] = 2
+# # dif从下往上接近dea
+# dif_cond1 = df['dif'] < df['dea']
+# dif_cond2 = df['dea'] - df['dif'] < 0.002
+# dif_cond3 = df['dif'].shift(1) < df['dea'].shift(1)
+# # macd柱线由弱转强，柱线图向下深度连续两根小于-0.015
+# macd_cond1 = df['macd_bar'] > df['macd_bar'].shift(1)
+# macd_cond2 = df['macd_bar'].shift(1) < df['macd_bar'].shift(2)
+# macd_cond3 = df['macd_bar'].shift(2) < -0.015
+# line_cond1 = df['close'] < df['ma60']
+# df.loc[((dif_cond1 & dif_cond2 & dif_cond3) | (macd_cond1 & macd_cond2 & macd_cond3)) & line_cond1, 'signal_up'] = 2
 
-print(df[['candle_begin_time', 'close', 'ma60', 'dif', 'dea', 'macd_bar', 'signal_up']])
+# RSI做多信号(6, 12, 24)
+for index, row in df.iterrows():
+    if index == 0:
+        continue
+
+    up_sum = 0
+    down_sum = 0
+    up_count = 0
+    down_count = 0
+    start_index = -1
+    # RS6
+    if index - start_index > 6:
+        start_index = index - 6
+    for ii in range(index, start_index, -1):
+        # c_index 相对区间位置索引
+        c_index = index - ii
+        if c_index == 0:
+            continue
+        try:
+            if df.at[c_index, 'close'] > df.at[c_index-1, 'close']:
+                up_sum += (df.at[c_index, 'close'] - df.at[c_index-1, 'close'])
+                up_count += 1
+            elif df.at[c_index, 'close'] < df.at[c_index-1, 'close']:
+                down_sum += (df.at[c_index-1, 'close'] - df.at[c_index, 'close'])
+                down_count += 1
+        except KeyError:
+            print('error:')
+            print(index)
+            print(ii)
+            print(c_index)
+            exit()
+    if up_sum == 0 or down_sum == 0:
+        df.at[0, 'rs6'] = 0
+    else:
+        df.at[0, 'rs6'] = (up_sum / up_count) / (down_sum / down_count)
+
+
+df['rsi6'] = 100 - (100 / (1 + df['rs6']))
+print(df)
+# print(df[['candle_begin_time', 'close', 'ma60', 'dif', 'dea', 'macd_bar', 'signal_up']])
 exit()
 
 # 做空
