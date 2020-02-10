@@ -3,12 +3,14 @@
 from lib.db.mongo_handler import get_spot_collection
 from lib.api.okex.spot_api import SpotApi
 import pandas as pd
+import talib as ta
 import time
 
+# 不换行显示
 pd.set_option('expand_frame_repr', False)
-# pd.set_option('display.max_rows', 500)
-# pd.set_option('display.min_rows', 500)
-pd.set_option('display.max_rows', None)
+pd.set_option('display.max_rows', 100)
+pd.set_option('display.min_rows', 100)
+# pd.set_option('display.max_rows', None)
 
 # instrument_id = 'BTC-USDT'
 instrument_id = 'EOS-USDT'
@@ -76,28 +78,31 @@ period_df = period_df[period_df['volume'] > 0]
 period_df.reset_index(inplace=True)
 df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 
+# TA-Lib MACD
+df['dif'], df['dea'], df['macd_bar'] = ta.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
+
 # 计算移动平均线
 df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
 df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
 df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
 df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
 
-# 先复制第一行的ema12和ema26为收盘价（shift(1)：上一条）
-# 后面从第二行开始计算
-for index, row in df.iterrows():
-    if index == 0:
-        # 先初始化第一行ema12和ema26
-        prev_ema12 = df.at[0, 'ema12'] = df.at[0, 'close']
-        prev_ema26 = df.at[0, 'ema26'] = df.at[0, 'close']
-    else:
-
-        prev_ema12 = df.at[index, 'ema12'] = (row['close'] * 2 + (12 - 1) * prev_ema12) / (12 + 1)
-        prev_ema26 = df.at[index, 'ema26'] = (row['close'] * 2 + (26 - 1) * prev_ema26) / (26 + 1)
-
-df['dif'] = df['ema12'] - df['ema26']
-df['dea'] = df['dif'].rolling(9, min_periods=1).mean()
-# macd柱线
-df['macd_bar']  = (df['dif'] - df['dea']) * 2
+# # 先复制第一行的ema12和ema26为收盘价（shift(1)：上一条）
+# # 后面从第二行开始计算
+# for index, row in df.iterrows():
+#     if index == 0:
+#         # 先初始化第一行ema12和ema26
+#         prev_ema12 = df.at[0, 'ema12'] = df.at[0, 'close']
+#         prev_ema26 = df.at[0, 'ema26'] = df.at[0, 'close']
+#     else:
+#
+#         prev_ema12 = df.at[index, 'ema12'] = (row['close'] * 2 + (12 - 1) * prev_ema12) / (12 + 1)
+#         prev_ema26 = df.at[index, 'ema26'] = (row['close'] * 2 + (26 - 1) * prev_ema26) / (26 + 1)
+#
+# df['dif'] = df['ema12'] - df['ema26']
+# df['dea'] = df['dif'].rolling(9, min_periods=1).mean()
+# # macd柱线
+# df['macd_bar']  = (df['dif'] - df['dea']) * 2
 
 # 交易量移动平均线
 # df['vma5']  = df['volume'].rolling(5, min_periods=1).mean()
@@ -105,7 +110,7 @@ df['macd_bar']  = (df['dif'] - df['dea']) * 2
 
 # BOLL指标
 n = 20     # 中轨n根K线的移动平均线
-m = 2       # 系数
+m = 2      # 系数
 # 计算中轨
 df['median'] = df['close'].rolling(n, min_periods=1).mean()
 # 计算标准差

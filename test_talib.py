@@ -3,20 +3,26 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import talib
+import talib as ta
+from lib.api.okex.spot_api import SpotApi
+from datetime import datetime, timedelta
 
-real0 = np.random.normal(10, 10, 10)[:2]
-real1 = np.random.rand(10)[:2]
-print(real0)
-print(real1)
+# print(help(ta.SMA))
+# print(help(ta.MA))
+print(pd.date_range('20000101', periods=100))
+exit()
 
-print(talib.ADD(real0, real1))
+instrument_id = 'BTC-USDT'
+kline = SpotApi.get_kline(instrument_id)
 
-a = talib.EMA(real0, timeperiod=100)
-b = talib.EMA(real1, timeperiod=100)
+# for item in kline:
+#     print(item)
 
-plt.figure()
-plt.plot()
-plt.show()
+df = pd.DataFrame(kline, columns={'candle_begin_time': 0, 'open': 1, 'high': 2, 'low': 3, 'close': 4, 'volume': 5})
+df['candle_begin_time'] = df['candle_begin_time'].apply(lambda x: datetime.strftime(datetime.strptime(x, '%Y-%m-%dT%H:%M:%S.%fZ') + timedelta(hours=8), '%Y-%m-%d %H:%M:%S'))
 
+# sma
+df['sma'] = ta.SMA(df['close'], timeperiod=5)
 
+print(df)
+exit()
