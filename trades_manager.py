@@ -1,5 +1,5 @@
 # encoding=utf-8
-# 交易数据写入pandas
+# 计算一分钟交易数据，计算后写入MongoDB
 
 import time
 import datetime
@@ -12,38 +12,37 @@ from lib.db.mongo_handler import get_spot_collection, get_swap_collection
 import threading
 import requests
 from lib.okex.exceptions import OkexAPIException
+from lib.common import get_dict
 
-
-class TradesThread(threading.Thread):
-    pass
-
-
+##########
+# 初始化 #
+##########
 # 交易数据汇总存储（默认5秒存储）
 spot_total_dict = {}
+spot_last_trade_id_dict = {}
 swap_total_dict = {}
-last_trade_id = ''
-
-total_default = {
-    'timestamp': '',
-    'trade_id': '',
-    'price': 0,
-    'size': 0,
-    'side': '',
-    'status': 0,    # 状态【0：未初始化；1：使用中】
-}
+swap_last_trade_id_dict = {}
 
 # 现货交易key
 for instrument_id in spot_coin_type:
     # 初始化DataFrame
     # trade_spot_df[instrument_id] = pd.DataFrame(columns=['timestamp', 'trade_id', 'price', 'size', 'side', 'buy_size', 'sell_size'])
-    # 初始化交易数据
-    spot_total_dict[instrument_id] = total_default
+    # 初始化交易数据，按一分钟时间戳分组
+    spot_total_dict[instrument_id] = {}
+    spot_last_trade_id_dict[instrument_id] = ''
 
 # 合约交易key
 for instrument_id in swap_coin_type:
     # 初始化DataFrame
     # trade_swap_df[instrument_id] = pd.DataFrame(columns=['timestamp', 'trade_id', 'price', 'size', 'side', 'buy_size', 'sell_size'])
-    swap_total_dict[instrument_id] = total_default
+    # 初始化交易数据，按一分钟时间戳分组
+    swap_total_dict[instrument_id] = {}
+    swap_last_trade_id_dict[instrument_id] = ''
+
+
+class TradesThread(threading.Thread):
+    pass
+
 
 ###############################
 instrument_id = 'BTC-USDT'
@@ -84,10 +83,9 @@ while True:
 
     # 交易记录条数
     trade_len = len(trade_list)
-    # 遍历交易记录
+    # 遍历交易记录，倒序读取
     for index in range(trade_len - 1, 0, -1):
         item = trade_list[index]
-        last_trade_id = item['trade_id']
         # ISO8601 时间转换
         time_array = datetime.datetime.strptime(item['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
         # 转成北京时间
@@ -101,18 +99,37 @@ while True:
         base_second = tm_second - temp
         # 设置基准秒数
         time_array = time_array.replace(second=base_second)
+
         # 设置基准时间戳
         base_timestamp = time.mktime(time_array.timetuple())
+        trade_id = item['trade_id']
+        price = float(item['price'])
+        size = float(item['size'])
+        volume = price * size
+        # buy: 买入; sell: 卖出
+        side = item['side']
 
         data = {
-            'timestamp': base_timestamp,
-            'trade_id' : item['trade_id'],
-            'price': float(item['price']),
-            'size': float(item['size']),
-            'side': item['side'],
+            'buy_volume': 0,
+            'sell_volume': 0,
+            'trade_ids': [],
         }
-        # 添加一条pandas数据
-        # trade_spot_df[redis_key] = trade_spot_df[redis_key].append(temp, ignore_index=True)
 
+        item = get_dict(spot_total_dict, instrument_id, base_timestamp)
+        if item is None:
+            spot_total_dict[instrument_id][base_timestamp] = data
+        # 添加trade_id，避免重复录入
+        spot_total_dict[instrument_id][base_timestamp]['trade_ids'].append(trade_id)
+        # 累加买卖交易量
+        if side == 'buy':
+            spot_total_dict[instrument_id][base_timestamp]['buy_volume'] += volume
+        elif side == 'sell':
+            spot_total_dict[instrument_id][base_timestamp]['sell_volume'] += volume
+
+    # 记录instrument_id对于的币
+    spot_last_trade_id_dict[instrument_id] = trade_id
+
+
+    print(spot_total_dict[instrument_id])
     exit()
 

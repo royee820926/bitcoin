@@ -13,7 +13,8 @@ pd.set_option('display.min_rows', 100)
 # pd.set_option('display.max_rows', None)
 
 # instrument_id = 'BTC-USDT'
-instrument_id = 'EOS-USDT'
+# instrument_id = 'EOS-USDT'
+instrument_id = 'ETH-USDT'
 collection = get_spot_collection(instrument_id)
 
 # 取出多少条1分钟K线（选取2天的K线前导数据，diff和dea计算结果会趋于为固定值）
@@ -78,31 +79,25 @@ period_df = period_df[period_df['volume'] > 0]
 period_df.reset_index(inplace=True)
 df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 
-# TA-Lib MACD
-df['dif'], df['dea'], df['macd_bar'] = ta.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
-
 # 计算移动平均线
-df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
-df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
-df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
-df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
+# df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
+# df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
+# df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
+# df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
 
-# # 先复制第一行的ema12和ema26为收盘价（shift(1)：上一条）
-# # 后面从第二行开始计算
-# for index, row in df.iterrows():
-#     if index == 0:
-#         # 先初始化第一行ema12和ema26
-#         prev_ema12 = df.at[0, 'ema12'] = df.at[0, 'close']
-#         prev_ema26 = df.at[0, 'ema26'] = df.at[0, 'close']
-#     else:
-#
-#         prev_ema12 = df.at[index, 'ema12'] = (row['close'] * 2 + (12 - 1) * prev_ema12) / (12 + 1)
-#         prev_ema26 = df.at[index, 'ema26'] = (row['close'] * 2 + (26 - 1) * prev_ema26) / (26 + 1)
-#
-# df['dif'] = df['ema12'] - df['ema26']
-# df['dea'] = df['dif'].rolling(9, min_periods=1).mean()
-# # macd柱线
-# df['macd_bar']  = (df['dif'] - df['dea']) * 2
+# TA-Lib -> RSI
+# df['dif'], df['dea'], df['macd_bar'] = ta.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
+
+# TA-Lib -> RSI
+df['rsi6'] = ta.RSI(df['close'], timeperiod=6)
+df['rsi12'] = ta.RSI(df['close'], timeperiod=12)
+df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
+# df['fastk'], df['fastd'] = ta.STOCHRSI(df['close'], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+print(df)
+exit()
+
+
+
 
 # 交易量移动平均线
 # df['vma5']  = df['volume'].rolling(5, min_periods=1).mean()
