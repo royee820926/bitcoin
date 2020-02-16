@@ -3,6 +3,7 @@ import json
 from . import consts as c, utils, exceptions
 import logging
 
+
 log_format = '%(asctime)s - %(levelname)s - %(message)s'
 logging.basicConfig(filename='mylog-rest.json', filemode='a', format=log_format, level=logging.INFO)
 
@@ -49,14 +50,44 @@ class Client(object):
         # print("headers:", header)
         # print("body:", body)
         logging.info("body:" + body)
+        try:
+            if method == c.GET:
+                response = requests.get(url, headers=header, timeout=(3, 3))
+            elif method == c.POST:
+                response = requests.post(url, data=body, headers=header, timeout=(3, 3))
+                #response = requests.post(url, json=body, headers=header)
+            elif method == c.DELETE:
+                response = requests.delete(url, headers=header, timeout=(3, 3))
 
-        if method == c.GET:
-            response = requests.get(url, headers=header, timeout=(3, 3))
-        elif method == c.POST:
-            response = requests.post(url, data=body, headers=header, timeout=(3, 3))
-            #response = requests.post(url, json=body, headers=header)
-        elif method == c.DELETE:
-            response = requests.delete(url, headers=header, timeout=(3, 3))
+        except requests.exceptions.SSLError as rse:
+            # 请求错误
+            # print(rse)
+            # print('requests.exceptions.SSLError')
+            # exit()
+            return None
+        except requests.exceptions.ConnectionError as rce:
+            # 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。
+            # print(rce)
+            # print('requests.exceptions.ConnectionError')
+            # exit()
+            return None
+        except requests.exceptions.ReadTimeout as rto:
+            # 读请求超时
+            # print(rto)
+            # print('requests.exceptions.ReadTimeout')
+            # exit()
+            return None
+        except requests.exceptions.ConnectTimeout as cto:
+            # 连接请求超时
+            # print(cto)
+            # print('requests.exceptions.ConnectTimeout')
+            # exit()
+            return None
+        except exceptions.OkexAPIException as oae:
+            # print(oae)
+            # print('OkexAPIException')
+            # exit()
+            return None
 
         # exception handle
         if not str(response.status_code).startswith('2'):
@@ -85,7 +116,20 @@ class Client(object):
 
     def _get_timestamp(self):
         url = c.API_URL + c.SERVER_TIMESTAMP_URL
-        response = requests.get(url, timeout=(3, 3))
+        try:
+            response = requests.get(url, timeout=(3, 3))
+
+        except requests.exceptions.SSLError as rse:
+            return None
+        except requests.exceptions.ConnectionError as rce:
+            return None
+        except requests.exceptions.ReadTimeout as rto:
+            return None
+        except requests.exceptions.ConnectTimeout as cto:
+            return None
+        except exceptions.OkexAPIException as oae:
+            return None
+
         if response.status_code == 200:
             return response.json()['iso']
         else:

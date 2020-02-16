@@ -165,7 +165,7 @@ class SpotThread(threading.Thread):
 
     def run(self):
         """
-        构造函数
+        线程入口
         :return:
         """
         instrument_id = self.name
