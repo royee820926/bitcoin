@@ -9,36 +9,19 @@ from lib.trade.collection import TradesThread
 from lib.trade.collection import VolumeStore
 
 
-##########
-# 初始化 #
-##########
-# 成交数据汇总累计（默认5秒存储）
-# ['BTC-USDT']['timestamp']
-spot_total_dict = {}
-swap_total_dict = {}
-# 成交量汇总
-# ['BTC-USDT']['timestamp']
-# {
-#     'buy_volume': 0,
-#     'sell_volume': 0,
-# }
-spot_total_volume = {}
-swap_total_volume = {}
-
-
-
 ###############################
 # 测试单个
 # instrument_id = 'BTC-USDT'
-# redis_key = 'BTC-USDT-TRADE'
+spot_coin_type = ['BTC-USDT']
 ###############################
 
 # 初始化store
 VolumeStore.init_store()
 thread_dict = {}
 thread_index = 0
-trade_type = 'spot'
+
 # 启动线程
+trade_type = 'spot'
 for coin_name in spot_coin_type:
     thread_index += 1
     thread_dict[coin_name] = TradesThread(thread_index, coin_name, trade_type)
@@ -48,15 +31,15 @@ for coin_name in spot_coin_type:
     thread_dict[coin_name].start()
     print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
 
-trade_type = 'swap'
-for coin_name in swap_coin_type:
-    thread_index += 1
-    thread_dict[coin_name] = TradesThread(thread_index, coin_name, trade_type)
-    # 设置守护线程
-    thread_dict[coin_name].setDaemon(True)
-    # 启动线程
-    thread_dict[coin_name].start()
-    print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
+# trade_type = 'swap'
+# for coin_name in swap_coin_type:
+#     thread_index += 1
+#     thread_dict[coin_name] = TradesThread(thread_index, coin_name, trade_type)
+#     # 设置守护线程
+#     thread_dict[coin_name].setDaemon(True)
+#     # 启动线程
+#     thread_dict[coin_name].start()
+#     print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
 
 print('===================================')
 # 阻塞线程

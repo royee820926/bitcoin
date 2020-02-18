@@ -1,6 +1,7 @@
 # encoding=utf-8
 
 import threading
+import time
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.swap_api import SwapApi
 from lib.common import get_dict, TimeOption
@@ -18,6 +19,14 @@ class TradesThread(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = thread_id
         self.name = coin_name
+        self.set_trade_type(trade_type)
+
+    def set_trade_type(self, trade_type):
+        """
+        设置交易类别 spot | swap
+        :param trade_type:
+        :return:
+        """
         self.__trade_type = trade_type
 
     def get_trade_type(self):
@@ -27,6 +36,18 @@ class TradesThread(threading.Thread):
         """
         return self.__trade_type
 
+    def get_api_trades(self):
+        trade_type = self.get_trade_type()
+        flag = True
+        if trade_type == 'spot':
+            data = SpotApi.get_trades(self.getName())
+        elif trade_type == 'swap':
+            data = SwapApi.get_trades(self.getName())
+        else:
+            data = None
+            flag = False
+        return data, flag
+
     def run(self):
         """
         线程入口
@@ -34,7 +55,11 @@ class TradesThread(threading.Thread):
         """
         while True:
             # 获取交易记录
-            trade_list = SpotApi.get_trades(self.getName())
+            trade_list, flag = self.get_api_trades()
+            if not flag:
+                return
+            if trade_list is None:
+                continue
 
             # 交易记录条数
             trade_len = len(trade_list)
@@ -94,6 +119,9 @@ class TradesThread(threading.Thread):
                     VolumeStore.volume_add_buy_volume(self.getName(), base_minute_time, volume)
                 elif side == 'sell':
                     VolumeStore.volume_add_sell_volume(self.getName(), base_minute_time, volume)
+
+            # 等待500毫秒
+            time.sleep(0.5)
 
 
 class VolumeStore:
