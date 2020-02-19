@@ -5,8 +5,8 @@ import pandas as pd
 
 from config.spot_coin import spot_coin_type
 from config.swap_coin import swap_coin_type
-from lib.trade.collection import TradesThread
-from lib.trade.collection import VolumeStore
+from lib.trade.collection.thread import TradesThread
+from lib.trade.collection.store import VolumeStore
 
 
 ###############################
