@@ -47,6 +47,22 @@ class VolumeStore:
             cls.__total_volume[coin_name] = {}
 
     @classmethod
+    def get_total_dict(cls):
+        """
+        获取全部的5秒数据
+        :return:
+        """
+        return cls.__total_dict
+
+    @classmethod
+    def get_total_volume(cls):
+        """
+        获取全部的1分钟数据
+        :return:
+        """
+        return cls.__total_volume
+
+    @classmethod
     def get_dict(cls, coin_name):
         """
         5秒成交数据结构
@@ -148,32 +164,51 @@ class VolumeStore:
         cls.__total_volume[coin_name][timestamp]['sell_volume'] += volume
 
     @classmethod
-    def is_in_dict_timestamp(cls, coin_name, timestamp):
+    def is_timestamp_in_dict(cls, coin_name, timestamp):
+        """
+        dict中是否存在timestamp
+        :param coin_name:
+        :param timestamp:
+        :return:
+        """
         if timestamp in cls.__total_dict[coin_name]:
             return True
         return False
 
     @classmethod
-    def is_in_volume_timestamp(cls, coin_name, timestamp):
+    def is_timestamp_in_volume(cls, coin_name, timestamp):
+        """
+        volume中是否存在timestamp
+        :param coin_name:
+        :param timestamp:
+        :return:
+        """
         if timestamp in cls.__total_volume[coin_name]:
             return True
         return False
 
     @classmethod
-    def get_dict_timestamp_list(cls, coin_name):
+    def get_dict_one_timestamp(cls, coin_name, timestamp):
         """
-        获取币种下的不同时间戳的成交量列表
+        获取单个时间戳下的成交量数据
         :param coin_name:
+        :param timestamp:
         :return:
         """
-        return cls.__total_dict[coin_name]
+        time_list = cls.get_dict(coin_name)
+        if time_list is not None or timestamp in time_list:
+            return time_list[timestamp]
+        return None
 
     @classmethod
-    def get_volume_timestamp_list(cls, coin_name):
+    def get_volume_one_timestamp(cls, coin_name, timestamp):
         """
-        获取币种下的不同时间戳的成交量列表
+        获取单个时间戳下的成交量数据
         :param coin_name:
+        :param timestamp:
         :return:
         """
-        return cls.__total_volume[coin_name]
-
+        time_list = cls.get_volume(coin_name)
+        if time_list is not None or timestamp in time_list:
+            return time_list[timestamp]
+        return None

@@ -51,5 +51,10 @@ import threading
 # result = time.strftime('%Y-%m-%d %H:%M:00', time.localtime(result))
 # print(result)
 
-
+tt = {}
+ss = ''
+if bool(ss):
+    print('not none')
+else:
+    print('none')
 
