@@ -1,60 +1,35 @@
 # encoding=utf-8
 
-from lib.api.okex.spot_api import SpotApi
-from lib.api.okex.swap_api import SwapApi
-from config.spot_coin import spot_coin_type
-from lib.db.mongo_handler import get_spot_collection
-from lib.okex.exceptions import OkexAPIException
-import time
-import threading
-import requests
-import threading
+from test.test_api import TestApi
 
+# 资金账户API
+# 账户信息
+# result = TestApi.account_get_wallet()
 
-# class Abc(threading.Thread):
-#     def __init__(self, thread_id, coin_name):
-#         threading.Thread.__init__(self)
-#         self.threadID = thread_id
-#         self.name = coin_name
-#
-#     def run(self):
-#         print(self.getName())
-#         print(Store.get_name())
-# class Store:
-#     __name = 'dengjun2'
-#     @classmethod
-#     def get_name(cls):
-#         return cls.__name
-# tt = Abc(1, 'dengjun')
-# tt.setDaemon(True)
-# tt.start()
-# tt.join()
+# result = TestApi.account_get_currencies()
+# result = TestApi.account_get_coin_fee('btc')
+# 资金划转
+# 资金账户:6 -> 币币:1
+currency = 'USDT'
+amount = '10'
+account_from = '6'
+account_to = '1'
+result = TestApi.account_coin_transfer(currency=currency, amount=amount, account_from=account_from, account_to=account_to,
+                                       sub_account='', instrument_id='', to_instrument_id='')
 
+# 币币API
+# 账户信息
+# result = TestApi.spot_get_account_info()
+# 指定币种的账户信息
+# result = TestApi.spot_get_coin_account_info('LTC')
+# 币对信息
+# result = TestApi.spot_get_coin_info('USDT')
 
-# 现货
-# result = SpotApi.get_kline('BTC-USDT')
-# result = SpotApi.get_kline(instrument_id='BTC-USDT', start='2020-01-03T15:03:00.000Z', end='2020-01-03T15:07:00.000Z')
-# result = SpotApi.get_kline(instrument_id='BTC-USDT', start='2020-01-12T08:52:00.000Z')
+# 指数API
+# 公共-获取指数成分
+# result = TestApi.index_get_index_constituents('BTC-USD')
+
 
 # for item in result:
 #     print(item)
-
-# 合约
-# result = SwapApi.get_kline('BTC-USD-SWAP')
-# print(result)
-# print(len(result))
-
-
-# print(int(time.time()))
-# result = 1578158115
-#
-# result = time.strftime('%Y-%m-%d %H:%M:00', time.localtime(result))
-# print(result)
-
-tt = {}
-ss = ''
-if bool(ss):
-    print('not none')
-else:
-    print('none')
-
+print(result)

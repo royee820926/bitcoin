@@ -50,6 +50,9 @@ class Client(object):
         # print("headers:", header)
         # print("body:", body)
         logging.info("body:" + body)
+        print(url)
+        print(body)
+        exit()
         try:
             if method == c.GET:
                 response = requests.get(url, headers=header, timeout=(3, 3))

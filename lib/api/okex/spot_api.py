@@ -6,14 +6,61 @@ from lib.api.okex.base import ApiBase
 
 class SpotApi(ApiBase):
     @classmethod
-    def get_spot_api(cls):
+    def get_instance(cls):
         """
         获取现货 api实例
         :return:
         """
         if cls._spot_api is None:
-            cls._spot_api = spot_api.SpotAPI(cls._api_key, cls._seceret_key, cls._passphrase, True)
+            cls._spot_api = spot_api.SpotAPI(cls._api_key, cls._secret_key, cls._passphrase, True)
         return cls._spot_api
+
+    @classmethod
+    def get_account_info(cls):
+        """
+        币币账户信息
+        :return:
+        """
+        return cls.get_instance().get_account_info()
+
+    @classmethod
+    def get_coin_account_info(cls, currency):
+        """
+        获取指定币种的账户信息
+        :param currency:
+        :return:
+        """
+        return cls.get_instance().get_coin_account_info(currency)
+
+    @classmethod
+    def get_coin_info(cls, type="USDT"):
+        """
+        币对信息
+        :param type:
+        :return:
+        """
+        return cls.get_instance().get_coin_info()
+
+    @classmethod
+    def take_order(cls, instrument_id, side, client_oid='', type='', size='', price='', order_type='0', notional=''):
+        """
+        下单
+        :param instrument_id: 币对名称
+        :param side: buy（买） 或 sell（卖）
+        :param client_oid: 由您设置的订单ID来识别您的订单,格式是字母（区分大小写）+数字 或者 纯字母（区分大小写），1-32位字符 （不能重复）
+        :param type: limit或market（默认是limit）。当以market（市价）下单，order_type只能选择0（普通委托）
+        :param size: 买入或卖出的数量（限价单 | 市价单）
+        :param price: 价格（限价单）
+        :param order_type:
+               0：普通委托（order type不填或填0都是普通委托）
+               1：只做Maker（Post only）挂单
+               2：全部成交或立即取消（FOK）
+               3：立即成交并取消剩余（IOC）
+        :param notional: 买入金额，市价买入时必填notional（市价单）
+        :return:
+        """
+        return cls.get_instance().take_order(instrument_id=instrument_id, side=side, client_oid=client_oid, type=type,
+                                             size=size, price=price, order_type=order_type, notional=notional)
 
     @classmethod
     def get_depth(cls, instrument_id):
@@ -22,7 +69,7 @@ class SpotApi(ApiBase):
         :param instrument_id:
         :return:
         """
-        return cls.get_spot_api().get_depth(instrument_id)
+        return cls.get_instance().get_depth(instrument_id)
 
     @classmethod
     def get_all_ticker(cls):
@@ -30,7 +77,7 @@ class SpotApi(ApiBase):
         全部ticker信息
         :return:
         """
-        return cls.get_spot_api().get_ticker()
+        return cls.get_instance().get_ticker()
 
     @classmethod
     def get_fills(cls, instrument_id, order_id, after='', before='', limit=''):
@@ -43,7 +90,7 @@ class SpotApi(ApiBase):
         :param limit:
         :return:
         """
-        return cls.get_spot_api().get_fills(instrument_id=instrument_id, order_id=order_id,
+        return cls.get_instance().get_fills(instrument_id=instrument_id, order_id=order_id,
                                             after=after, before=before, limit=limit)
 
     @classmethod
@@ -54,7 +101,7 @@ class SpotApi(ApiBase):
         :param limit:
         :return:
         """
-        return cls.get_spot_api().get_deal(instrument_id=instrument_id, after='', before='', limit=limit)
+        return cls.get_instance().get_deal(instrument_id=instrument_id, after='', before='', limit=limit)
 
     @classmethod
     def get_specific_ticker(cls, instrument_id):
@@ -63,7 +110,7 @@ class SpotApi(ApiBase):
         :param instrument_id:
         :return:
         """
-        return cls.get_spot_api().get_specific_ticker(instrument_id)
+        return cls.get_instance().get_specific_ticker(instrument_id)
 
     @classmethod
     def get_kline(cls, instrument_id, start='', end='', granularity=60):
@@ -75,26 +122,5 @@ class SpotApi(ApiBase):
         :param granularity:
         :return:
         """
-        return cls.get_spot_api().get_kline(instrument_id=instrument_id, start=start, end=end, granularity=granularity)
-
-    @classmethod
-    def get_coin_info(cls, type="USDT"):
-        """
-        币对信息
-        :param type:
-        :return:
-        """
-        coin_info_list = cls.get_spot_api().get_coin_info()
-        # 指定后缀
-        if type and type in ['BTC', 'ETH', 'USDK', 'USDT', 'OKB']:
-            result = []
-            for coin_info in coin_info_list:
-                ins_array = coin_info['instrument_id'].split('-')
-                try:
-                    if ins_array[1] == type:
-                        result.append(coin_info)
-                except IndexError:
-                    continue
-            return result
-        return coin_info_list
+        return cls.get_instance().get_kline(instrument_id=instrument_id, start=start, end=end, granularity=granularity)
 

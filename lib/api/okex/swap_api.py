@@ -6,13 +6,13 @@ from lib.api.okex.base import ApiBase
 
 class SwapApi(ApiBase):
     @classmethod
-    def get_swap_api(cls):
+    def get_instance(cls):
         """
         获取合约 api实例
         :return:
         """
         if cls._swap_api is None:
-            cls._swap_api = swap_api.SwapAPI(cls._api_key, cls._seceret_key, cls._passphrase, True)
+            cls._swap_api = swap_api.SwapAPI(cls._api_key, cls._secret_key, cls._passphrase, True)
         return cls._swap_api
 
     @classmethod
@@ -25,7 +25,7 @@ class SwapApi(ApiBase):
         :param limit:
         :return:
         """
-        return cls.get_swap_api().get_trades(instrument_id=instrument_id, after=after, before=before, limit=limit)
+        return cls.get_instance().get_trades(instrument_id=instrument_id, after=after, before=before, limit=limit)
 
     @classmethod
     def get_kline(cls, instrument_id, start='', end='', granularity=60):
@@ -37,4 +37,4 @@ class SwapApi(ApiBase):
         :param granularity:
         :return:
         """
-        return cls.get_swap_api().get_kline(instrument_id=instrument_id, start=start, end=end, granularity=granularity)
+        return cls.get_instance().get_kline(instrument_id=instrument_id, start=start, end=end, granularity=granularity)
