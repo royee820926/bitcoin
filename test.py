@@ -23,9 +23,10 @@ from lib.api.okex.index_api import IndexApi
 # 账户信息
 # result = SpotApi.get_account_info()
 # 指定币种的账户信息
-result = SpotApi.get_coin_account_info('USDT')
-print(result)
-exit()
+# result = SpotApi.get_coin_account_info('USDT')
+# for item in result:
+#     print(item)
+# exit()
 # 币对信息
 # result = SpotApi.get_coin_info('USDT')
 # 交易手续费费率

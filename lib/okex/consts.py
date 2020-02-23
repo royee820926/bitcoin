@@ -1,7 +1,6 @@
 
 # http header
-# API_URL = 'https://www.okex.com'
-API_URL = 'http://www.okex.me'
+API_URL = 'https://www.okex.me'
 CONTENT_TYPE = 'Content-Type'
 OK_ACCESS_KEY = 'OK-ACCESS-KEY'
 OK_ACCESS_SIGN = 'OK-ACCESS-SIGN'
@@ -78,6 +77,7 @@ LEVER_ORDER_LIST = '/api/margin/v3/orders'
 LEVEL_ORDERS_PENDING = '/api/margin/v3/orders_pending'
 LEVER_ORDER_INFO = '/api/margin/v3/orders/'
 LEVER_FILLS = '/api/margin/v3/fills'
+LEVER_MARK_PRICE = '/api/margin/v3/instruments/'
 
 # future
 FUTURE_POSITION = '/api/futures/v3/position'
