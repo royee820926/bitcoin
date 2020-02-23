@@ -63,6 +63,42 @@ class SpotApi(ApiBase):
                                              size=size, price=price, order_type=order_type, notional=notional)
 
     @classmethod
+    def revoke_order(cls, instrument_id, order_id='', client_oid=''):
+        """
+        撤销指定订单
+        :param instrument_id:
+        :param order_id:
+        :param client_oid:
+        :return:
+        """
+        return cls.get_instance().revoke_order(instrument_id=instrument_id, order_id=order_id, client_oid=client_oid)
+
+    @classmethod
+    def get_order_list(cls, instrument_id, state, after='', before='', limit=''):
+        """
+        获取订单列表
+        :param instrument_id:
+        :param state:
+        :param after:
+        :param before:
+        :param limit:
+        :return:
+        """
+        return cls.get_instance().get_orders_list(instrument_id=instrument_id, state=state, after=after, before=before, limit=limit)
+
+    @classmethod
+    def get_orders_pending(cls, instrument_id, after='', before='', limit=''):
+        """
+        获取所有未成交订单
+        :param instrument_id:
+        :param after:
+        :param before:
+        :param limit:
+        :return:
+        """
+        return cls.get_instance().get_orders_pending(instrument_id=instrument_id, after=after, before=before, limit=limit)
+
+    @classmethod
     def get_trade_fee(cls):
         """
         获取当前账户交易手续费费率
