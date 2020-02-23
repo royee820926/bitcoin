@@ -23,6 +23,7 @@ class TestApi:
     def spot_get_coin_info(cls, type):
         return SpotApi.get_coin_info(type)
 
+
     ################# account #################
     @classmethod
     def account_get_wallet(cls):

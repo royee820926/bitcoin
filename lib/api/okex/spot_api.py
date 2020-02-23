@@ -63,6 +63,14 @@ class SpotApi(ApiBase):
                                              size=size, price=price, order_type=order_type, notional=notional)
 
     @classmethod
+    def get_trade_fee(cls):
+        """
+        获取当前账户交易手续费费率
+        :return: taker: 吃单手续费率；maker: 挂单手续费率；timestamp: 数据返回时间
+        """
+        return cls.get_instance().get_trade_fee()
+
+    @classmethod
     def get_depth(cls, instrument_id):
         """
         公共-获取深度数据
