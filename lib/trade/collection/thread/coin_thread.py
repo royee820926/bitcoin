@@ -5,7 +5,7 @@ import time
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.swap_api import SwapApi
 from lib.common import get_dict, TimeOption
-from lib.trade.collection.store import VolumeStore
+from lib.trade.collection.volume_store import VolumeStore
 
 
 class CoinThread(threading.Thread):
@@ -55,7 +55,7 @@ class CoinThread(threading.Thread):
             # 获取交易记录
             trade_list, flag = self.get_api_trades()
             if not flag:
-                return
+                continue
             if trade_list is None:
                 continue
 
@@ -94,10 +94,12 @@ class CoinThread(threading.Thread):
                 if not VolumeStore.is_timestamp_in_dict(self.getName(), base_timestamp):
                     # 初始化
                     VolumeStore.init_dict_timestamp(self.getName(), base_timestamp)
-                no_trade_id = False
+
+                # trade_id 是否在列表中
+                has_trade_id = True
                 # 添加trade_id，累计成交量
                 if trade_id not in VolumeStore.get_dict_one_timestamp(self.getName(), base_timestamp)['trade_ids']:
-                    no_trade_id = True
+                    has_trade_id = False
                     # 如果trade_id不在列表中，则添加
                     VolumeStore.dict_append_trade_id(self.getName(), base_timestamp, trade_id)
                     # 累加买卖交易量
@@ -114,12 +116,17 @@ class CoinThread(threading.Thread):
                 if not VolumeStore.is_timestamp_in_volume(self.getName(), base_minute_time):
                     # 初始化
                     VolumeStore.init_volume_timestamp(self.getName(), base_minute_time)
-                if no_trade_id:
+                if not has_trade_id:
                     if side == 'buy':
                         VolumeStore.volume_add_buy_volume(self.getName(), base_minute_time, volume)
                     elif side == 'sell':
                         VolumeStore.volume_add_sell_volume(self.getName(), base_minute_time, volume)
 
+            total_dict = VolumeStore.get_total_dict()['BTC-USDT']
+            for key, item in total_dict.items():
+                print(item)
+
+            exit()
             # 等待500毫秒
             time.sleep(0.5)
 

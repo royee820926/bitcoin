@@ -7,7 +7,7 @@ from config.spot_coin import spot_coin_type
 from config.swap_coin import swap_coin_type
 from lib.trade.collection.thread.coin_thread import CoinThread
 from lib.trade.collection.thread.coin_store_thread import CoinStoreThread
-from lib.trade.collection.store import VolumeStore
+from lib.trade.collection.volume_store import VolumeStore
 
 
 ###############################
@@ -43,16 +43,19 @@ for coin_name in spot_coin_type:
 #     print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
 
 print('===================================')
-# 阻塞线程
-for coin_name, coin_thread in thread_dict.items():
-    coin_thread.join()
+
 
 # 入库、统计线程启动
 thread_index += 1
-coin_store_thread = CoinStoreThread(thread_index, 'coin_store_thread')
-coin_store_thread.setDaemon(True)
-coin_store_thread.start()
-coin_store_thread.join()
+# coin_store_thread = CoinStoreThread(thread_index, 'coin_store_thread')
+# coin_store_thread.setDaemon(True)
+# coin_store_thread.start()
+
+
+# 阻塞线程
+for coin_name, coin_thread in thread_dict.items():
+    coin_thread.join()
+# coin_store_thread.join()
 
 
 print('主线程退出')

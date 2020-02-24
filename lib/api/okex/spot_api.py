@@ -145,7 +145,7 @@ class SpotApi(ApiBase):
         :param limit:
         :return:
         """
-        return cls.get_instance().get_deal(instrument_id=instrument_id, after='', before='', limit=limit)
+        return cls.get_instance().get_deal(instrument_id=instrument_id, limit=limit)
 
     @classmethod
     def get_specific_ticker(cls, instrument_id):
