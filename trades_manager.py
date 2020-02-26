@@ -47,15 +47,15 @@ print('===================================')
 
 # 入库、统计线程启动
 thread_index += 1
-# coin_store_thread = CoinStoreThread(thread_index, 'coin_store_thread')
-# coin_store_thread.setDaemon(True)
-# coin_store_thread.start()
+coin_store_thread = CoinStoreThread(thread_index, 'coin_store_thread')
+coin_store_thread.setDaemon(True)
+coin_store_thread.start()
 
 
 # 阻塞线程
 for coin_name, coin_thread in thread_dict.items():
     coin_thread.join()
-# coin_store_thread.join()
+coin_store_thread.join()
 
 
 print('主线程退出')

@@ -6,7 +6,7 @@ from config.swap_coin import swap_coin_type
 
 class VolumeStore:
     """
-    成交量数据汇总
+    成交量数据汇总存储
     """
     # 成交量数据结构
     default_dict_struct = {

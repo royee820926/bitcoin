@@ -122,11 +122,10 @@ class CoinThread(threading.Thread):
                     elif side == 'sell':
                         VolumeStore.volume_add_sell_volume(self.getName(), base_minute_time, volume)
 
-            total_dict = VolumeStore.get_total_dict()['BTC-USDT']
-            for key, item in total_dict.items():
-                print(item)
-
-            exit()
+            # total_dict = VolumeStore.get_total_dict()['BTC-USDT']
+            # for key, item in total_dict.items():
+            #     print(item)
+            # exit()
             # 等待500毫秒
             time.sleep(0.5)
 
