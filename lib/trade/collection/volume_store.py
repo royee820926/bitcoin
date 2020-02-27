@@ -1,5 +1,6 @@
 # encoding=utf-8
 
+import threading
 from config.spot_coin import spot_coin_type
 from config.swap_coin import swap_coin_type
 
@@ -23,6 +24,12 @@ class VolumeStore:
     __total_dict = {}
     # 1分钟成交数据汇总
     __total_volume = {}
+    # 成交量数据操作锁
+    __volume_lock = threading.Lock()
+
+    @classmethod
+    def get_lock(cls):
+        return cls.__volume_lock
 
     @classmethod
     def init_store(cls):
@@ -142,6 +149,26 @@ class VolumeStore:
         cls.__total_dict[coin_name][timestamp]['sell_volume'] += volume
 
     @classmethod
+    def volume_set_volume(cls, coin_name, timestamp, buy_volume=0, sell_volume=0, symbol=''):
+        """
+        设置成交量（+ 增加；- 减少；0 清空）
+        :param coin_name:
+        :param timestamp:
+        :param buy_volume:
+        :param sell_volume:
+        :param symbol:
+        :return: 返回修改前的数据
+        """
+        result = cls.__total_volume[coin_name][timestamp]
+        if symbol == '+':
+            cls.volume_add_buy_volume(coin_name, timestamp, buy_volume)
+            cls.volume_add_sell_volume(coin_name, timestamp, sell_volume)
+        elif symbol == '0':
+            cls.__total_volume[coin_name][timestamp]['buy_volume'] = 0
+            cls.__total_volume[coin_name][timestamp]['sell_volume'] = 0
+        return result
+
+    @classmethod
     def volume_add_buy_volume(cls, coin_name, timestamp, volume):
         """
         成交量数据结构 添加买入成交量
@@ -162,6 +189,19 @@ class VolumeStore:
         :return:
         """
         cls.__total_volume[coin_name][timestamp]['sell_volume'] += volume
+
+    @classmethod
+    def del_volume_by_timestamp(cls, coin_name, timestamp):
+        """
+        删除时间戳对应的成交量数据
+        :param coin_name:
+        :param timestamp:
+        :return:
+        """
+        if timestamp in cls.__total_volume[coin_name]:
+            cls.__total_volume[coin_name].pop(timestamp)
+            return True
+        return False
 
     @classmethod
     def is_timestamp_in_dict(cls, coin_name, timestamp):

@@ -4,8 +4,8 @@ from pymongo import MongoClient
 
 
 def get_mongo_handler():
-    host = '192.168.2.110'
-    # host = '192.168.10.10'
+    # host = '192.168.2.110'
+    host = '192.168.10.10'
     port = '27017'
     db_name = 'test_db'
 
@@ -44,7 +44,7 @@ class MongoHandle:
 
     @classmethod
     def get_instance(cls):
-        if cls._instance is None:
+        if cls._client is None:
             cls._client = get_mongo_handler()
         return cls._client
 

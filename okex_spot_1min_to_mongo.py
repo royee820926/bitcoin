@@ -120,12 +120,14 @@ class SpotThread(threading.Thread):
                 k_volume = kline_item[5]
                 document = {
                     # 东八区时间
-                    "time": int(timestamp),
+                    'time': int(timestamp),
                     "open": float(k_open),
-                    "high": float(k_high),
-                    "low": float(k_low),
-                    "close": float(k_close),
-                    "volume": float(k_volume)
+                    'high': float(k_high),
+                    'low': float(k_low),
+                    'close': float(k_close),
+                    'volume': float(k_volume),
+                    'buy_volume': 0.0,
+                    'sell_volume': 0.0,
                 }
                 # 写入数据
                 inserted_id = collection_dict[instrument_id].insert_one(document).inserted_id

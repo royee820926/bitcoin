@@ -125,7 +125,7 @@ class CoinThread(threading.Thread):
             # total_dict = VolumeStore.get_total_dict()['BTC-USDT']
             # for key, item in total_dict.items():
             #     print(item)
-            # exit()
+            exit()
             # 等待500毫秒
             time.sleep(0.5)
 
