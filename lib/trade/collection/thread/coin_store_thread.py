@@ -33,21 +33,40 @@ class CoinStoreThread(threading.Thread):
                         # 2 如果数据库中存在该时间戳的记录，则将成绩量写入数据库，
                         # 3 否则略过该条数据，
 
+                        # 删除10分钟前的数据
                         if current_time - base_timestamp >= interval:
                             # 删除base_timestamp对应的数据
                             VolumeStore.del_volume_by_timestamp(coin_name, base_timestamp)
 
-                        col = MongoHandle.get_spot_collection(coin_name)
+                        # 根据不同的交易，获取对应的MongoDB操作句柄（spot | swap）
+                        coin_split = coin_name.split('-')
+                        if len(coin_split) > 2:
+                            if coin_split[2] == 'SWAP':
+                                # 合约
+                                col = MongoHandle.get_swap_collection(coin_name)
+                            else:
+                                continue
+                        elif len(coin_split) == 2:
+                            # 现货
+                            col = MongoHandle.get_spot_collection(coin_name)
+                        else:
+                            continue
+                        # 对应时间的记录是否存在
                         condition = {
-                            'time': int(base_timestamp)
+                            'time': int(base_timestamp),
                         }
                         doc = col.find_one(condition)
+                        # 该条数据在数据库中不存在
+                        if doc is None:
+                            continue
 
                         # 交易量计算
                         # 赋值后清空 symbol='0'
                         VolumeStore.get_lock().acquire()
-                        volume = VolumeStore.volume_set_volume(coin_name, base_timestamp, symbol='0')
-                        VolumeStore.get_lock().release()
+                        try:
+                            volume = VolumeStore.volume_set_volume(coin_name, base_timestamp, symbol='0')
+                        finally:
+                            VolumeStore.get_lock().release()
 
                         buy_volume = volume.get('buy_volume', 0)
                         sell_volume = volume.get('sell_volume', 0)

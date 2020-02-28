@@ -13,7 +13,7 @@ from lib.trade.collection.volume_store import VolumeStore
 ###############################
 # 测试单个
 # instrument_id = 'BTC-USDT'
-spot_coin_type = ['BTC-USDT']
+# spot_coin_type = ['BTC-USDT']
 ###############################
 
 # 初始化store
@@ -32,15 +32,15 @@ for coin_name in spot_coin_type:
     thread_dict[coin_name].start()
     print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
 
-# trade_type = 'swap'
-# for coin_name in swap_coin_type:
-#     thread_index += 1
-#     thread_dict[coin_name] = CoinThread(thread_index, coin_name, trade_type)
-#     # 设置守护线程
-#     thread_dict[coin_name].setDaemon(True)
-#     # 启动线程
-#     thread_dict[coin_name].start()
-#     print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
+trade_type = 'swap'
+for coin_name in swap_coin_type:
+    thread_index += 1
+    thread_dict[coin_name] = CoinThread(thread_index, coin_name, trade_type)
+    # 设置守护线程
+    thread_dict[coin_name].setDaemon(True)
+    # 启动线程
+    thread_dict[coin_name].start()
+    print('启动线程: %d, 名字: %s' % (thread_index, coin_name))
 
 print('===================================')
 

@@ -91,22 +91,22 @@ class CoinThread(threading.Thread):
                 #################
                 # 5秒钟交易量汇总 #
                 #################
-                if not VolumeStore.is_timestamp_in_dict(self.getName(), base_timestamp):
+                # if not VolumeStore.is_timestamp_in_dict(self.getName(), base_timestamp):
                     # 初始化
-                    VolumeStore.init_dict_timestamp(self.getName(), base_timestamp)
+                    # VolumeStore.init_dict_timestamp(self.getName(), base_timestamp)
 
                 # trade_id 是否在列表中
-                has_trade_id = True
+                # has_trade_id = True
                 # 添加trade_id，累计成交量
-                if trade_id not in VolumeStore.get_dict_one_timestamp(self.getName(), base_timestamp)['trade_ids']:
-                    has_trade_id = False
+                # if trade_id not in VolumeStore.get_dict_one_timestamp(self.getName(), base_timestamp)['trade_ids']:
+                #     has_trade_id = False
                     # 如果trade_id不在列表中，则添加
-                    VolumeStore.dict_append_trade_id(self.getName(), base_timestamp, trade_id)
+                    # VolumeStore.dict_append_trade_id(self.getName(), base_timestamp, trade_id)
                     # 累加买卖交易量
-                    if side == 'buy':
-                        VolumeStore.dict_add_buy_volume(self.getName(), base_timestamp, volume)
-                    elif side == 'sell':
-                        VolumeStore.dict_add_sell_volume(self.getName(), base_timestamp, volume)
+                    # if side == 'buy':
+                    #     VolumeStore.dict_add_buy_volume(self.getName(), base_timestamp, volume)
+                    # elif side == 'sell':
+                    #     VolumeStore.dict_add_sell_volume(self.getName(), base_timestamp, volume)
 
                 ##########################
                 # 1分钟交易量汇总，准备入库 #
@@ -116,16 +116,27 @@ class CoinThread(threading.Thread):
                 if not VolumeStore.is_timestamp_in_volume(self.getName(), base_minute_time):
                     # 初始化
                     VolumeStore.init_volume_timestamp(self.getName(), base_minute_time)
-                if not has_trade_id:
+
+                # trade_id 是否在列表中
+                if trade_id not in VolumeStore.get_volume_one_timestamp(self.getName(), base_minute_time)['trade_ids']:
                     if side == 'buy':
-                        VolumeStore.volume_add_buy_volume(self.getName(), base_minute_time, volume)
+                        VolumeStore.get_lock().acquire()
+                        try:
+                            VolumeStore.volume_set_volume(self.getName(), base_minute_time, buy_volume=volume, symbol='+')
+                        finally:
+                            VolumeStore.get_lock().release()
+
                     elif side == 'sell':
-                        VolumeStore.volume_add_sell_volume(self.getName(), base_minute_time, volume)
+                        VolumeStore.get_lock().acquire()
+                        try:
+                            VolumeStore.volume_set_volume(self.getName(), base_minute_time, sell_volume=volume, symbol='+')
+                        finally:
+                            VolumeStore.get_lock().release()
 
             # total_dict = VolumeStore.get_total_dict()['BTC-USDT']
             # for key, item in total_dict.items():
             #     print(item)
-            exit()
+            # exit()
             # 等待500毫秒
-            time.sleep(0.5)
+            time.sleep(0.2)
 

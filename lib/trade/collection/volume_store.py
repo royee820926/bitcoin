@@ -19,6 +19,7 @@ class VolumeStore:
     default_volume_struct = {
         'buy_volume'  : 0,
         'sell_volume' : 0,
+        'trade_ids': [],
     }
     # 5秒成交数据结构
     __total_dict = {}
