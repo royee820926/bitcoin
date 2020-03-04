@@ -5,17 +5,18 @@ from lib.api.okex.spot_api import SpotApi
 import pandas as pd
 import talib as ta
 import time
+from lib.strategy.open_position import OpenPositionStrategy as ops
 
 
 # 不换行显示
 pd.set_option('expand_frame_repr', False)
-pd.set_option('display.max_rows', 100)
-pd.set_option('display.min_rows', 100)
-# pd.set_option('display.max_rows', None)
+# pd.set_option('display.max_rows', 100)
+# pd.set_option('display.min_rows', 100)
+pd.set_option('display.max_rows', None)
 
-# instrument_id = 'BTC-USDT'
+instrument_id = 'BTC-USDT'
 # instrument_id = 'EOS-USDT'
-instrument_id = 'ETH-USDT'
+# instrument_id = 'ETH-USDT'
 collection = get_spot_collection(instrument_id)
 
 # 取出多少条1分钟K线（选取2天的K线前导数据，diff和dea计算结果会趋于为固定值）
@@ -84,7 +85,7 @@ df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 # df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
 # df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
 # df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
-# df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
+df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
 
 # TA-Lib -> MACD
 df['dif'], df['dea'], df['macd_bar'] = ta.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
@@ -93,24 +94,10 @@ df['dif'], df['dea'], df['macd_bar'] = ta.MACD(df['close'], fastperiod=12, slowp
 df['rsi6'] = ta.RSI(df['close'], timeperiod=6)
 df['rsi12'] = ta.RSI(df['close'], timeperiod=12)
 df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
-print(df.tail(50))
-exit()
 
 # 交易量移动平均线
 # df['vma5']  = df['volume'].rolling(5, min_periods=1).mean()
 # df['vma10'] = df['volume'].rolling(10, min_periods=1).mean()
-
-# # BOLL指标
-# n = 20     # 中轨n根K线的移动平均线
-# m = 2      # 系数
-# # 计算中轨
-# df['median'] = df['close'].rolling(n, min_periods=1).mean()
-# # 计算标准差
-# df['std'] = df['close'].rolling(n, min_periods=1).std(ddof=0)  # ddof 标准差自由度
-# # 计算上轨
-# df['upper'] = df['median'] + m * df['std']
-# # 计算下轨
-# df['lower'] = df['median'] - m * df['std']
 
 # print(df[['candle_begin_time', 'close', 'median', 'std', 'upper', 'lower']])
 
@@ -119,6 +106,10 @@ exit()
 # [2：做多、1：做多平仓、-2：做空、-1：做空平仓]
 
 # 做多信号1
+ops.macd_overlap(df=df)
+ops.macd_multi_bar(df=df)
+
+
 # DIF上穿DEA
 # dif_cond1 = df['dif'] > df['dea']
 # dif_cond2 = df['dif'].shift(1) <= df['dea'].shift(1)
@@ -142,6 +133,8 @@ exit()
 # line_cond1 = df['close'] < df['ma60']
 # df.loc[((dif_cond1 & dif_cond2 & dif_cond3) | (macd_cond1 & macd_cond2 & macd_cond3)) & line_cond1, 'signal_up'] = 2
 
+print(df)
+exit()
 
 # 做空
 dif_cond1 = df['dif'] < df['dif'].shift(1)

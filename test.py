@@ -1,8 +1,16 @@
 # encoding=utf-8
 
+import time
 from lib.api.okex.account_api import AccountApi
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.index_api import IndexApi
+
+# instrument_id = 'BTC-USDT'
+# kline = SpotApi.get_kline(instrument_id=instrument_id)
+# kline = list(reversed(kline))
+# for item in kline:
+#     print(item)
+
 
 # 资金账户API
 # 账户信息
