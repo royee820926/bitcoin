@@ -1,7 +1,11 @@
 # encoding=utf-8
 
 
-class OpenPositionStrategy:
+class LongPositionStrategy:
+    """
+    开仓做多
+    """
+
     # macd粘合最大值
     _max_macd_overlap = 0
     # macd粘合最小值

@@ -5,7 +5,7 @@ from lib.api.okex.spot_api import SpotApi
 import pandas as pd
 import talib as ta
 import time
-from lib.strategy.open_position import OpenPositionStrategy as ops
+from lib.strategy.long_position import LongPositionStrategy as lps
 
 
 # 不换行显示
@@ -106,8 +106,8 @@ df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
 # [2：做多、1：做多平仓、-2：做空、-1：做空平仓]
 
 # 做多信号1
-ops.macd_overlap(df=df)
-ops.macd_multi_bar(df=df)
+lps.macd_overlap(df=df)
+lps.macd_multi_bar(df=df)
 
 
 # DIF上穿DEA

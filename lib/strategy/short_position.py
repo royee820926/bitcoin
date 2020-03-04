@@ -1,7 +1,10 @@
 # encoding=utf-8
 
 
-class CloseOutStrategy:
+class ShortPositionStrategy:
+    """
+    做空
+    """
 
     @classmethod
     def macd_overlap(cls, df):
