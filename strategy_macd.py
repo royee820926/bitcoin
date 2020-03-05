@@ -6,6 +6,7 @@ import pandas as pd
 import talib as ta
 import time
 from lib.strategy.long_position import LongPositionStrategy as lps
+from lib.strategy.long_liquidation import LongLiquidationStrategy as lls
 
 
 # 不换行显示
@@ -105,10 +106,12 @@ df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
 # ==== 标记信号 ====
 # [2：做多、1：做多平仓、-2：做空、-1：做空平仓]
 
-# 做多信号1
+# 做多信号
 lps.macd_overlap(df=df)
 lps.macd_multi_bar(df=df)
 
+# 做多平仓信号
+lls.long_top_line(df=df)
 
 # DIF上穿DEA
 # dif_cond1 = df['dif'] > df['dea']
