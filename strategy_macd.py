@@ -83,7 +83,7 @@ period_df.reset_index(inplace=True)
 df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 
 # 计算移动平均线
-# df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
+df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
 # df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
 # df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
 df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
@@ -107,11 +107,20 @@ df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
 # [2：做多、1：做多平仓、-2：做空、-1：做空平仓]
 
 # 做多信号
-lps.macd_overlap(df=df)
-lps.macd_multi_bar(df=df)
+# lps.macd_overlap(df=df)
+# lps.macd_multi_bar(df=df)
+lps.lower_rsi_next(df=df)
 
 # 做多平仓信号
-lls.long_top_line(df=df)
+long_signal = df[df[lps.get_signal_key()] == 1]
+
+# 根据做多信号，生成后续的平仓信号
+for item in long_signal.iterrows():
+    index = item[0]
+    print(df.iloc[index]['close'])
+    exit()
+
+exit()
 
 # DIF上穿DEA
 # dif_cond1 = df['dif'] > df['dea']
