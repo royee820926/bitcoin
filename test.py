@@ -44,8 +44,8 @@ from lib.api.okex.index_api import IndexApi
 # instrument_id = 'EOS-USDT'
 # side = 'buy'
 # 限价单
-price = '20'
-size = '1'
+# price = '20'
+# size = '1'
 # result = SpotApi.take_order(instrument_id=instrument_id, side=side, price=price, size=size)
 ######################################
 # 全部卖出
@@ -54,14 +54,14 @@ size = '1'
 # 获取未成交订单
 # result = SpotApi.get_orders_pending('EOS-USDT')
 
-currency_info = SpotApi.get_coin_account_info('EOS')
-
-instrument_id = 'EOS-USDT'
-side = 'sell'
+# currency_info = SpotApi.get_coin_account_info('EOS')
+#
+# instrument_id = 'EOS-USDT'
+# side = 'sell'
 # 市价单
-size = str(currency_info['available'])
-notional = '5'
-result = SpotApi.take_order(instrument_id=instrument_id, side=side, size=size, notional=notional)
+# size = str(currency_info['available'])
+# notional = '5'
+# result = SpotApi.take_order(instrument_id=instrument_id, side=side, size=size, notional=notional)
 
 # 撤销挂单
 # result = SpotApi.revoke_order('EOS-USDT', '4438881476487168')
@@ -74,4 +74,19 @@ result = SpotApi.take_order(instrument_id=instrument_id, side=side, size=size, n
 
 # for item in result:
 #     print(item)
-print(result)
+# print(result)
+
+###############
+# Logger 日志 #
+###############
+import os
+import logging
+from lib.logger import Logger
+root_path = os.path.dirname(os.path.realpath(__file__))
+config = {
+    'root_path': root_path
+}
+logger = Logger(log_name='main', config=config, log_level=logging.INFO)
+logger.log('%s passing in %s' % ('coin_name', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(1234567890))))
+
+

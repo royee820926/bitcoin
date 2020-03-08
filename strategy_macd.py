@@ -8,6 +8,9 @@ import time
 from lib.strategy.long_position import LongPositionStrategy as lps
 from lib.strategy.long_liquidation import LongLiquidationStrategy as lls
 
+# 导入测试
+from lib.strategy.strategy_test import StrategyTest as st
+
 
 # 不换行显示
 pd.set_option('expand_frame_repr', False)
@@ -112,14 +115,9 @@ df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
 lps.lower_rsi_next(df=df)
 
 # 做多平仓信号
-long_signal = df[df[lps.get_signal_key()] == 1]
+lls.find_rsi_top(df=df)
 
-# 根据做多信号，生成后续的平仓信号
-for item in long_signal.iterrows():
-    index = item[0]
-    print(df.iloc[index]['close'])
-    exit()
-
+print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
 exit()
 
 # DIF上穿DEA

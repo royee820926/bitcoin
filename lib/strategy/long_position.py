@@ -71,7 +71,9 @@ class LongPositionStrategy:
         # 前一条rsi指标低于rsi_lower_limit，rsi指标低于前一条rsi指标
         rsi_conf = (df['rsi6'].shift(1) < cls._rsi_lower_limit) & (df['rsi6'] > df['rsi6'].shift(1))
         # macd柱线
-        macd_conf = df['macd_bar'] > cls._min_macd_overlap
-        df.loc[rsi_conf & macd_conf, cls._signal_key] = cls._signal
+        # macd_conf = df['macd_bar'] > cls._min_macd_overlap
+
+        # df.loc[rsi_conf & macd_conf, cls._signal_key] = cls._signal
+        df.loc[rsi_conf, cls._signal_key] = cls._signal
         return True
 
