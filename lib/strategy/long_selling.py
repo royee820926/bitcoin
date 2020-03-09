@@ -62,27 +62,24 @@ class LongSellingStrategy:
         long_signal = df[df[lps.get_signal_key()] == 1]
 
         # 避免两个做多信号相隔太近
+        base_index = -1
         for item in long_signal.iterrows():
-            pass
+            if base_index == -1:
+                base_index = int(item[0])
+                continue
+            curr_index = int(item[0])
 
-        # if curr_index - base_index < 5:
-        #     print('#' * 40)
-        #     print(curr_index, base_index)
-        #
-        #     # 清空此信号
-        #     df.loc[df['candle_begin_time'] == curr_time, lps.get_signal_key()] = pd.NaT
-        #     break
-        #     # print('stop test')
-        #     # print(max_time)
-        #     # print(max_rsi6)
-        #     # exit()
-
+            if curr_index - base_index <= 5:
+                long_signal.drop([curr_index], inplace=True)
+            else:
+                base_index = curr_index
+        print('1212')
+        exit()
         # 遍历做多信号，逐个生成后续的平仓信号
         for item in long_signal.iterrows():
             index = item[0]
-            # print(index)
-            # exit()
             cls.one_rsi_top(df, index)
+
 
     @classmethod
     def one_rsi_top(cls, df, base_index):
@@ -96,8 +93,6 @@ class LongSellingStrategy:
         base_item = df.iloc[base_index]
         base_close = base_item['close']
         curr_index = base_index
-        # print(df.iloc[base_index]['candle_begin_time'])
-        # print('#' * 40)
 
         while True:
             curr_index += 1

@@ -14,7 +14,7 @@ class Logger:
     __log_level = logging.DEBUG
     __file_name = None
     __default_file_name = 'app.log'
-    __backupCount = 7
+    __backupCount = 366
     __config = {}
 
     def __init__(self, config, log_name='', file_name='', log_level=logging.DEBUG):
