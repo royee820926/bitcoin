@@ -1,6 +1,6 @@
 # encoding=utf-8
 
-from lib.strategy.long_liquidation import LongLiquidationStrategy as lls
+from lib.strategy.long_selling import LongSellingStrategy as lss
 
 
 class StrategyTest:
@@ -52,7 +52,7 @@ class StrategyTest:
                 # 计算平仓，如果rsi6的跌幅超过15% 或 rsi6大于rsi_upper_limit
                 rsi6_increase = (rsi6 - prev_rsi6) / prev_rsi6 * 100
 
-                # if prev_rsi6 > lls.get_rsi_upper_limit() or (prev_rsi6 > 50 and rsi6_increase < -10):
+                # if prev_rsi6 > lss.get_rsi_upper_limit() or (prev_rsi6 > 50 and rsi6_increase < -10):
                 # 前一个rsi6大于50，前一个rsi6大于当前rsi6
                 if prev_rsi6 > 60 and prev_rsi6 > rsi6:
                     print(rsi6_increase)

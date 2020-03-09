@@ -6,7 +6,7 @@ import pandas as pd
 import talib as ta
 import time
 from lib.strategy.long_position import LongPositionStrategy as lps
-from lib.strategy.long_liquidation import LongLiquidationStrategy as lls
+from lib.strategy.long_selling import LongSellingStrategy as lss
 
 # 导入测试
 from lib.strategy.strategy_test import StrategyTest as st
@@ -107,15 +107,16 @@ df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
 
 
 # ==== 标记信号 ====
-# [2：做多、1：做多平仓、-2：做空、-1：做空平仓]
-
 # 做多信号
-# lps.macd_overlap(df=df)
-# lps.macd_multi_bar(df=df)
 lps.lower_rsi_next(df=df)
 
 # 做多平仓信号
-lls.find_rsi_top(df=df)
+lss.find_rsi_top(df=df)
+
+# ==== 计算资金 ====
+from test.spot_trade_test import SpotTradeTest
+
+SpotTradeTest.money_curve(df=df, capital=1000)
 
 print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
 exit()

@@ -1,9 +1,10 @@
 # encoding=utf-8
 
+import pandas as pd
 from lib.strategy.long_position import LongPositionStrategy as lps
 
 
-class LongLiquidationStrategy:
+class LongSellingStrategy:
     """
     做多平仓
     """
@@ -12,7 +13,7 @@ class LongLiquidationStrategy:
     # rsi上限阈值
     _rsi_upper_limit = 75
     # 做多平仓信号标志
-    _signal = 1
+    _signal = 0
     _signal_key = 'signal_ls'
 
     @classmethod
@@ -60,6 +61,22 @@ class LongLiquidationStrategy:
         # 查询做多信号为1的记录
         long_signal = df[df[lps.get_signal_key()] == 1]
 
+        # 避免两个做多信号相隔太近
+        for item in long_signal.iterrows():
+            pass
+
+        # if curr_index - base_index < 5:
+        #     print('#' * 40)
+        #     print(curr_index, base_index)
+        #
+        #     # 清空此信号
+        #     df.loc[df['candle_begin_time'] == curr_time, lps.get_signal_key()] = pd.NaT
+        #     break
+        #     # print('stop test')
+        #     # print(max_time)
+        #     # print(max_rsi6)
+        #     # exit()
+
         # 遍历做多信号，逐个生成后续的平仓信号
         for item in long_signal.iterrows():
             index = item[0]
@@ -100,16 +117,6 @@ class LongLiquidationStrategy:
                 # if rsi6 > max_rsi6:
                 #     max_rsi6 = rsi6
                 #     max_time = df.iloc[curr_index]['candle_begin_time']
-
-                # 到达下一个做多信号
-                if signal_lp == 1:
-                    # 避免两个做多信号相隔太近
-                    if curr_index - base_index > 5:
-                        break
-                        # print('stop test')
-                        # print(max_time)
-                        # print(max_rsi6)
-                        # exit()
 
                 # 计算平仓，如果rsi6的跌幅超过15% 或 rsi6大于rsi_upper_limit
                 rsi6_increase = (rsi6 - prev_rsi6) / prev_rsi6 * 100
