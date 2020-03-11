@@ -11,7 +11,7 @@ class LongSellingStrategy:
     # 长上影线的比率（即将下行）
     _long_top_rate = 2
     # rsi上限阈值
-    _rsi_upper_limit = 75
+    _rsi_upper_limit = 70
     # 做多平仓信号标志
     _signal = 0
     _signal_key = 'signal_ls'
@@ -58,8 +58,8 @@ class LongSellingStrategy:
         :param df:
         :return:
         """
-        # 查询做多信号为1的记录
-        long_signal = df[df[lps.get_signal_key()] == 1]
+        # 查询做多信号为1的记录（创建副本）
+        long_signal = df[df[lps.get_signal_key()] == 1].copy()
 
         # 避免两个做多信号相隔太近
         base_index = -1
@@ -69,17 +69,12 @@ class LongSellingStrategy:
                 continue
             curr_index = item[0]
 
+            # n个K线内不产生交易信号
             if curr_index - base_index <= 5:
-                # print(long_signal)
-                print(curr_index)
-                # exit()
-                long_signal.drop(labels=curr_index, axis=0, inplace=True)
-                print(long_signal)
-                exit()
+                long_signal.drop(labels=[curr_index], axis=0, inplace=True)
             else:
                 base_index = curr_index
-        print('1212')
-        exit()
+
         # 遍历做多信号，逐个生成后续的平仓信号
         for item in long_signal.iterrows():
             index = item[0]
@@ -122,7 +117,7 @@ class LongSellingStrategy:
                 rsi6_increase = (rsi6 - prev_rsi6) / prev_rsi6 * 100
 
                 # 前一个rsi6大于50，前一个rsi6大于当前rsi6
-                if prev_rsi6 > 60 and prev_rsi6 > rsi6:
+                if prev_rsi6 > cls._rsi_upper_limit and prev_rsi6 > rsi6:
                     # 设置平仓信号
                     df.loc[df['candle_begin_time'] == curr_time, cls._signal_key] = cls._signal
                     break
