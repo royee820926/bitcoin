@@ -65,12 +65,17 @@ class LongSellingStrategy:
         base_index = -1
         for item in long_signal.iterrows():
             if base_index == -1:
-                base_index = int(item[0])
+                base_index = item[0]
                 continue
-            curr_index = int(item[0])
+            curr_index = item[0]
 
             if curr_index - base_index <= 5:
-                long_signal.drop([curr_index], inplace=True)
+                # print(long_signal)
+                print(curr_index)
+                # exit()
+                long_signal.drop(labels=curr_index, axis=0, inplace=True)
+                print(long_signal)
+                exit()
             else:
                 base_index = curr_index
         print('1212')
