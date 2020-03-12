@@ -112,8 +112,8 @@ lps.lower_rsi_next(df=df)
 
 # 做多平仓信号
 lss.find_rsi_top(df=df)
-print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
-exit()
+# print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
+# exit()
 
 # ==== 计算资金 ====
 from test.spot_trade_test import SpotTradeTest

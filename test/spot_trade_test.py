@@ -21,7 +21,17 @@ class SpotTradeTest:
         # 更新现货交易参数
         InputParameter.update_spot_param(cls._update_interval)
         # 合并交易信号
-        df['signal'] = df[['signal_lp', 'signal_ls']].sum(axis=1, min_count=1, skipna=True)
+        # df['signal'] = df[['signal_lp', 'signal_ls']].sum(axis=1, min_count=1, skipna=True)
+
+        # 添加start_time标记通过分组计算资金曲线
+        df.loc[df['signal_lp']==1, 'start_time'] = df['candle_begin_time']
+        df.loc[df['signal_ls']==0, 'start_time'] = df['candle_begin_time']
+        df['start_time'].fillna(method='ffill', inplace=True)
+        df.dropna(subset=['start_time'], inplace=True)
+        # print(df)
+        print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls', 'start_time ']])
+        exit()
+
 
         print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls', 'signal']])
         exit()
