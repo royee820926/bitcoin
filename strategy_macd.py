@@ -86,7 +86,7 @@ period_df.reset_index(inplace=True)
 df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
 
 # 计算移动平均线
-df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
+# df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
 # df['ma20'] = df['close'].rolling(20, min_periods=1).mean()
 # df['ma30'] = df['close'].rolling(30, min_periods=1).mean()
 df['ma60'] = df['close'].rolling(60, min_periods=1).mean()
@@ -118,7 +118,7 @@ lss.find_rsi_top(df=df)
 # ==== 计算资金 ====
 from test.spot_trade_test import SpotTradeTest
 
-SpotTradeTest.money_curve(df=df, capital=1000)
+SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=3)
 
 print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
 exit()
