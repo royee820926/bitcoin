@@ -8,41 +8,19 @@ import time
 from lib.strategy.long_position import LongPositionStrategy as lps
 from lib.strategy.long_selling import LongSellingStrategy as lss
 
-# 导入测试
-from lib.strategy.strategy_test import StrategyTest as st
+from lib.pandas_module import PandasModule
 
-
-# 不换行显示
-pd.set_option('expand_frame_repr', False)
-# pd.set_option('display.max_rows', 100)
-# pd.set_option('display.min_rows', 100)
-pd.set_option('display.max_rows', None)
+# 初始化pandas参数
+PandasModule.init(pd=pd)
 
 instrument_id = 'BTC-USDT'
 # instrument_id = 'EOS-USDT'
 # instrument_id = 'ETH-USDT'
-collection = get_spot_collection(instrument_id)
 
-# 取出多少条1分钟K线（选取2天的K线前导数据，diff和dea计算结果会趋于为固定值）
-kline_length = 2 * 24 * 60
-# 从数据库读取K线记录
-temp = collection.find().sort([('time', -1)]).limit(kline_length)
+temp = PandasModule.get_data_from_mongo(instrument_id)
 result = []
 last_stamp_zh = 0
-for item in temp:
-    if last_stamp_zh == 0:
-        # 最后一条时间戳（请求kline接口时，换算成UTC时间）
-        last_stamp_zh = int(item['time']) - 8 * 3600
-    result.append({
-        'candle_begin_time' : time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(item['time'])),
-        'open'              : float(item['open']),
-        'high'              : float(item['high']),
-        'low'               : float(item['low']),
-        'close'             : float(item['close']),
-        'volume'            : float(item['volume']),
-    })
 
-result = list(reversed(result))
 
 # 转换ISO8601
 # 加60秒掠过last_stamp
@@ -118,9 +96,10 @@ lss.find_rsi_top(df=df)
 # ==== 计算资金 ====
 from test.spot_trade_test import SpotTradeTest
 
-SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=3)
+SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=25)
 
-print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
+# print(df[['candle_begin_time', 'close', 'rsi6', 'signal', 'pos', 'equity_change', 'equity_curve']])
+print(df)
 exit()
 
 # DIF上穿DEA

@@ -184,7 +184,6 @@ class SpotTradeTest:
         df.drop(['change', 'buy_at_open_change', 'sell_next_open_change', 'start_time', 'position', 'position_max',
                  'position_min', 'profit', 'profit_min', 'cash', 'cash_min'], axis=1, inplace=True)
 
-        print(df[['candle_begin_time', 'close', 'rsi6', 'signal', 'pos', 'equity_change', 'equity_curve']])
-        exit()
+
 
 
