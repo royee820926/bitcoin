@@ -19,15 +19,15 @@ instrument_id = 'BTC-USDT'
 
 start_time = int(time.time()) - 2 * 24 * 60 * 60
 kline_length = 2 * 24 * 60
-result = []
-PandasModule.get_data_from_mongo(instrument_id, result, start_time=start_time, kline_length=kline_length)
+result = PandasModule.get_data_from_mongo(instrument_id, start_time=start_time, kline_length=kline_length)
 
 df = pd.DataFrame(result)
 df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
 # print(type(df.iloc[0]['candle_begin_time']))
 # exit()
 # 重采样
-PandasModule.resample(df, 5)
+kline_rule = 5
+df = PandasModule.resample(df, kline_rule=kline_rule)
 
 # 计算移动平均线
 # df['ma7']  = df['close'].rolling(7, min_periods=1).mean()
@@ -62,7 +62,7 @@ lss.find_rsi_top(df=df)
 # ==== 计算资金 ====
 from test.spot_trade_test import SpotTradeTest
 
-SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=25)
+SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=20)
 
 # print(df[['candle_begin_time', 'close', 'rsi6', 'signal', 'pos', 'equity_change', 'equity_curve']])
 print(df)

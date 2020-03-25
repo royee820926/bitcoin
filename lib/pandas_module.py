@@ -19,17 +19,17 @@ class PandasModule:
         pd.set_option('display.max_rows', None)
 
     @classmethod
-    def get_data_from_mongo(cls, instrument_id, result, start_time, kline_length=2*24*60):
+    def get_data_from_mongo(cls, instrument_id, start_time, kline_length=2*24*60):
         """
         从数据库中获取数据（默认倒序）
         :param instrument_id:
-        :param result: 返回列表
         :param start_time:
         :param kline_length: K线数据的分钟数（默认2天）
         :return:
         """
+        result = []
         collection = get_spot_collection(instrument_id)
-        temp = collection.find({'time'}).sort([('time', -1)]).limit(kline_length)
+        temp = collection.find({"time" : {"$gte" : int(start_time)}}).sort([('time', -1)]).limit(kline_length)
         last_stamp_zh = 0
 
         for item in temp:
@@ -44,8 +44,8 @@ class PandasModule:
                 'close': float(item['close']),
                 'volume': float(item['volume']),
             })
-
         result = list(reversed(result))
+        return result
 
     @classmethod
     def kline_complete(cls, instrument_id, result):
@@ -96,3 +96,4 @@ class PandasModule:
         period_df = period_df[period_df['volume'] > 0]
         period_df.reset_index(inplace=True)
         df = period_df[['candle_begin_time', 'open', 'high', 'low', 'close', 'volume']]
+        return df
