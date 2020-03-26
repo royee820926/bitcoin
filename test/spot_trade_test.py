@@ -35,7 +35,8 @@ class SpotTradeTest:
         df.drop(['signal_lp', 'signal_ls'], axis=1, inplace=True)
 
         # 由signal计算出实际每天持有的仓位
-        df['pos'] = df['signal'].shift()
+        # df['pos'] = df['signal'].shift(1)
+        df['pos'] = df['signal']
         # 向下（时间的前进方向）补全pos
         df['pos'].fillna(method='ffill', inplace=True)
         # 将初始行数的pos补全为0
@@ -90,7 +91,7 @@ class SpotTradeTest:
         # 手续费
         c_rate = cls._c_rate
         # 最低保证金率
-        min_margin_rate = 0 # cls._min_margin_rate
+        min_margin_rate = 0  # cls._min_margin_rate
         # 总的杠杆金额
         total_cash = cls.get_total_cash(init_cash, leverage_rate)
         # 最低保证金
