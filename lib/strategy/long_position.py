@@ -68,7 +68,7 @@ class LongPositionStrategy:
         :param df: 依赖值: rsi6, macd_bar
         :return:
         """
-        # 前一条rsi指标低于rsi_lower_limit，rsi指标高于前一条rsi指标
+        # 前一条rsi指标低于rsi_lower_limit，rsi6指标高于前一条rsi指标
         rsi_conf = (df['rsi6'].shift(1) < cls._rsi_lower_limit) & (df['rsi6'] > df['rsi6'].shift(1))
         # macd柱线
         # macd_conf = df['macd_bar'] > cls._min_macd_overlap
@@ -77,3 +77,25 @@ class LongPositionStrategy:
         df.loc[rsi_conf, cls._signal_key] = cls._signal
         return True
 
+    @classmethod
+    def macd_upward_through(cls, df):
+        """
+        macd线上穿越
+        :param df: 依赖值: dif, dea, macd_bar
+        :return:
+        """
+        macd_conf  = (df['macd_bar'] > 0) & (df['macd_bar'].shift(1) < 0) & (df['dea'].shift(1) < 0)
+        dif_conf   = (df['dif'] > df['dea']) & (df['dif'].shift(1) < df['dea'].shift(1))
+        df.loc[macd_conf & dif_conf, cls._signal_key] = cls._signal
+        return True
+
+    @classmethod
+    def boll_upward_through(cls, df):
+        """
+        布林带上穿下轨
+        :param df:
+        :return:
+        """
+        boll_conf = (df['close'] > df['upper']) & (df['close'].shift(1) < df['upper'].shift(1))
+        df.loc[boll_conf, cls._signal_key] = cls._signal
+        return True

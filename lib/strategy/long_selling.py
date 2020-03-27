@@ -11,7 +11,7 @@ class LongSellingStrategy:
     # 长上影线的比率（即将下行）
     _long_top_rate = 2
     # rsi上限阈值
-    _rsi_upper_limit = 70
+    _rsi_upper_limit = 78
     # 做多平仓信号标志
     _signal = 0
     _signal_key = 'signal_ls'
@@ -49,6 +49,17 @@ class LongSellingStrategy:
         for index in range(inc_num):
             inc_conf = inc_conf & (df['macd_bar'].shift(index + 1) > df['macd_bar'].shift(index + 2))
         df.loc[low_conf & inc_conf, cls._signal_key] = cls._signal
+        return True
+
+    @classmethod
+    def boll_downward_through(cls, df):
+        """
+        布林带下穿上轨
+        :param df:
+        :return:
+        """
+        boll_conf = (df['close'] < df['upper']) & (df['close'].shift(1) > df['upper'].shift(1))
+        df.loc[boll_conf, cls._signal_key] = cls._signal
         return True
 
     @classmethod
@@ -116,7 +127,7 @@ class LongSellingStrategy:
                 # 计算平仓，如果rsi6的跌幅超过15% 或 rsi6大于rsi_upper_limit
                 rsi6_increase = (rsi6 - prev_rsi6) / prev_rsi6 * 100
 
-                # 前一个rsi6大于50，前一个rsi6大于当前rsi6
+                # 前一个rsi6大于70，前一个rsi6大于当前rsi6
                 if prev_rsi6 > cls._rsi_upper_limit and prev_rsi6 > rsi6:
                     # 设置平仓信号
                     df.loc[df['candle_begin_time'] == curr_time, cls._signal_key] = cls._signal

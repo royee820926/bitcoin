@@ -49,13 +49,23 @@ df['rsi24'] = ta.RSI(df['close'], timeperiod=24)
 
 # print(df[['candle_begin_time', 'close', 'median', 'std', 'upper', 'lower']])
 
+# boll指标
+from lib.indicator.boll_indicator import BollIndicator
+BollIndicator.get_value(df=df)
+
+# obv指标
+from lib.indicator.obv_indicator import ObvIndicator
+ObvIndicator.get_value(df=df)
 
 # ==== 标记信号 ====
 # 做多信号
-lps.lower_rsi_next(df=df)
+# lps.lower_rsi_next(df=df)
+# lps.macd_upward_through(df=df)
+lps.boll_upward_through(df=df)
 
 # 做多平仓信号
-lss.find_rsi_top(df=df)
+# lss.find_rsi_top(df=df)
+lss.boll_downward_through(df=df)
 # print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
 # exit()
 
@@ -66,6 +76,7 @@ SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=30)
 
 # print(df[['candle_begin_time', 'close', 'rsi6', 'signal', 'pos', 'equity_change', 'equity_curve']])
 print(df)
+# print(df[df['signal'].notnull()])
 exit()
 
 # DIF上穿DEA
