@@ -8,6 +8,5 @@
 
 
 from lib.production.production import Production as prod
-print(123)
-exit()
+
 prod.run()
