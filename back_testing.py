@@ -56,7 +56,8 @@ BollIndicator.get_value(df=df)
 # obv指标
 from lib.indicator.obv_indicator import ObvIndicator
 ObvIndicator.get_value(df=df)
-
+print(df)
+exit()
 # ==== 标记信号 ====
 # 做多信号
 # lps.lower_rsi_next(df=df)
