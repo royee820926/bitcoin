@@ -2,6 +2,7 @@
 
 from lib.okex import swap_api
 from lib.api.okex.base import ApiBase
+from lib.common import TimeOption
 
 
 class SwapApi(ApiBase):
@@ -38,3 +39,33 @@ class SwapApi(ApiBase):
         :return:
         """
         return cls.get_instance().get_kline(instrument_id=instrument_id, start=start, end=end, granularity=granularity)
+
+    @classmethod
+    def get_kline_more(cls, instrument_id, granularity=60):
+        """
+        指定开始和结束时间，获取更多的K线记录
+        :param instrument_id:
+        :param start:
+        :param end:
+        :param granularity:
+        :return:
+        """
+        result = []
+
+        kline = cls.get_kline(instrument_id)
+
+        for index in range(len(kline) - 1, -1, -1):
+            candle_begin_time = kline[index][0]
+
+            format_str = '%Y-%m-%dT%H:%M:%S.%fZ'
+            date_time = TimeOption.string2datetime(candle_begin_time, format_str, hours=8)
+            time_str = TimeOption.datetime2string(date_time)
+
+            kline[index][0] = time_str
+            result.append(kline[index])
+
+        for item in result:
+            print(item)
+        exit()
+
+
