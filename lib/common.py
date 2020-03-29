@@ -60,6 +60,16 @@ class TimeOption:
         return time.mktime(time_array.timetuple())
 
     @classmethod
+    def datetime2string(cls, date_time, format_str="%Y-%m-%d %H:%M:%S"):
+        """
+        datetime转字符串
+        :param date_time:
+        :param format_str:
+        :return:
+        """
+        return time.strftime(format_str, date_time.timetuple())
+
+    @classmethod
     def set_datetime(cls, time_array, **params):
         """
         设置datetime
