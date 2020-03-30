@@ -1,5 +1,6 @@
 # encoding=utf-8
 
+import time
 from lib.okex import swap_api
 from lib.api.okex.base import ApiBase
 from lib.common import TimeOption
@@ -45,14 +46,22 @@ class SwapApi(ApiBase):
         """
         指定开始和结束时间，获取更多的K线记录
         :param instrument_id:
-        :param start:
-        :param end:
         :param granularity:
         :return:
         """
         result = []
-
-        kline = cls.get_kline(instrument_id)
+        # '%Y-%m-%dT%H:%M:00.000Z'
+        start_time = '2020-03-30T09:00:00.000Z'
+        end_time = '2020-03-30T09:30:00.000Z'
+        # start_stamp = time.strftime('%Y-%m-%dT%H:%M:00.000Z', time.localtime(time.time()))
+        # print(type(start_stamp))
+        # print(type(start_time))
+        # print(instrument_id)
+        # exit()
+        kline = cls.get_kline(instrument_id, end=end_time)
+        for item in kline:
+            print(item)
+        exit()
 
         for index in range(len(kline) - 1, -1, -1):
             candle_begin_time = kline[index][0]

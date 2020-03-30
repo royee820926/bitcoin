@@ -1,9 +1,9 @@
 # encoding=utf-8
 
 import os
+import time
 import logging
 from logging import handlers
-
 
 class Logger:
     __log_handler = None
@@ -14,7 +14,7 @@ class Logger:
     __log_level = logging.DEBUG
     __file_name = None
     __default_file_name = 'app.log'
-    __backupCount = 366
+    __backupCount = 0
     __config = {}
 
     def __init__(self, config, log_name='', file_name='', log_level=logging.DEBUG):
@@ -43,8 +43,7 @@ class Logger:
         main_log = logging.getLogger(self.get_log_name())
         main_log.setLevel(self.get_log_level())
 
-        handler = handlers.TimedRotatingFileHandler(path_file, when='D', backupCount=self.__backupCount,
-                                                            interval=1)
+        handler = handlers.TimedRotatingFileHandler(path_file, when='D', backupCount=self.__backupCount, interval=1)
         handler.suffix = '%Y-%m-%d.log'
         # handler.setFormatter(logging.Formatter('%(asctime)s %(pathname)s[line:%(lineno)d][%(levelname)s] %(message)s'))
         handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
@@ -53,7 +52,8 @@ class Logger:
 
     def set_file_name(self, file_name):
         if file_name == '':
-            self.__file_name = self.__default_file_name
+            # self.__file_name = self.__default_file_name
+            self.__file_name = time.strftime("%Y-%m-%d.log", time.localtime(time.time()))
         else:
             self.__file_name = file_name
 
