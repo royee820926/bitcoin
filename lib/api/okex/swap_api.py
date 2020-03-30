@@ -50,31 +50,40 @@ class SwapApi(ApiBase):
         :return:
         """
         result = []
-        # '%Y-%m-%dT%H:%M:00.000Z'
-        start_time = '2020-03-30T09:00:00.000Z'
-        end_time = '2020-03-30T09:30:00.000Z'
-        # start_stamp = time.strftime('%Y-%m-%dT%H:%M:00.000Z', time.localtime(time.time()))
-        # print(type(start_stamp))
-        # print(type(start_time))
-        # print(instrument_id)
-        # exit()
-        kline = cls.get_kline(instrument_id, end=end_time)
-        for item in kline:
-            print(item)
-        exit()
+        curr_ts = int(time.time())
+        # 1天前
+        start_ts = curr_ts - 24 * 60 * 60
+        start_utc = start_ts - 8 * 60 * 60
+        # 相隔200分钟（200条数据）
+        end_utc = start_utc + 200 * 60
 
-        for index in range(len(kline) - 1, -1, -1):
-            candle_begin_time = kline[index][0]
+        while True:
+            start_utcstr = time.strftime('%Y-%m-%dT%H:%M:00.000Z', time.localtime(start_utc))
+            end_utcstr = time.strftime('%Y-%m-%dT%H:%M:00.000Z', time.localtime(end_utc))
 
-            format_str = '%Y-%m-%dT%H:%M:%S.%fZ'
-            date_time = TimeOption.string2datetime(candle_begin_time, format_str, hours=8)
-            time_str = TimeOption.datetime2string(date_time)
+            kline = cls.get_kline(instrument_id, start=start_utcstr, end=end_utcstr)
+            if not bool(kline):
+                break
 
-            kline[index][0] = time_str
-            result.append(kline[index])
+            # 倒序添加
+            for index in range(len(kline) - 1, -1, -1):
+                # ISO8601 to string for +8:00
+                time_8601 = kline[index][0]
+                date_time = TimeOption.string2datetime(time_8601, '%Y-%m-%dT%H:%M:00.000Z', hours=8)
+                candle_begin_time = TimeOption.datetime2string(date_time)
 
-        for item in result:
-            print(item)
-        exit()
+                result.append({
+                    'candle_begin_time': candle_begin_time,
+                    'open': float(kline[index][1]),
+                    'high': float(kline[index][2]),
+                    'low': float(kline[index][3]),
+                    'close': float(kline[index][4]),
+                    'volume': float(kline[index][5]),
+                })
+            # 更新时间
+            start_utc = end_utc
+            end_utc = start_utc + 200 * 60
+            time.sleep(0.1)
+        return result
 
 

@@ -3,6 +3,7 @@
 from lib.api.okex.swap_api import SwapApi
 import pandas as pd
 from config.swap_coin import swap_coin_type
+from lib.strategy.long_position import LongPositionStrategy as lps
 
 class Production:
     """
@@ -19,8 +20,11 @@ class Production:
         result = SwapApi.get_kline_more(instrument_id)
         df = pd.DataFrame(result)
 
-        # 找出做多信号
+        # 计算指标
 
+
+        # 找出做多信号
+        lps.seek_one_signal(df)
 
 
 

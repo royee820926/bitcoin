@@ -22,7 +22,8 @@ kline_length = 2 * 24 * 60
 result = PandasModule.get_data_from_mongo(instrument_id, start_time=start_time, kline_length=kline_length)
 
 df = pd.DataFrame(result)
-df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
+# df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
+
 # print(type(df.iloc[0]['candle_begin_time']))
 # exit()
 # 重采样

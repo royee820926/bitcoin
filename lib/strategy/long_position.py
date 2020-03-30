@@ -99,3 +99,15 @@ class LongPositionStrategy:
         boll_conf = (df['close'] > df['upper']) & (df['close'].shift(1) < df['upper'].shift(1))
         df.loc[boll_conf, cls._signal_key] = cls._signal
         return True
+
+    @classmethod
+    def seek_one_signal(cls, df):
+        """
+        遍历找出一个做多信号
+        :param df:
+        :return:
+        """
+        df_num = len(df)
+
+        print(len(df))
+        exit()
