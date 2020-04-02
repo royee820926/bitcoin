@@ -3,13 +3,13 @@
 import time
 from lib.db.mongo_handler import get_spot_collection
 from lib.api.okex.spot_api import SpotApi
+import pandas as pd
 
 class PandasModule:
     @classmethod
-    def init(cls, pd):
+    def init(cls):
         """
         初始化pandas参数
-        :param pd:
         :return:
         """
         # 不换行显示
@@ -29,7 +29,7 @@ class PandasModule:
         """
         result = []
         collection = get_spot_collection(instrument_id)
-        temp = collection.find({"time" : {"$gte" : int(start_time)}}).sort([('time', -1)]).limit(kline_length)
+        temp = collection.find({"time": {"$gte": int(start_time)}}).sort([('time', -1)]).limit(kline_length)
         last_stamp_zh = 0
 
         for item in temp:
@@ -83,7 +83,6 @@ class PandasModule:
         :return:
         """
         rule_type = '%dT' % kline_rule
-
         period_df = df.resample(rule=rule_type, on='candle_begin_time', label='left', closed='left').agg({
             'open': 'first',
             'high': 'max',

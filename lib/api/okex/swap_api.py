@@ -61,7 +61,7 @@ class SwapApi(ApiBase):
             start_utcstr = time.strftime('%Y-%m-%dT%H:%M:00.000Z', time.localtime(start_utc))
             end_utcstr = time.strftime('%Y-%m-%dT%H:%M:00.000Z', time.localtime(end_utc))
 
-            kline = cls.get_kline(instrument_id, start=start_utcstr, end=end_utcstr)
+            kline = cls.get_kline(instrument_id, start=start_utcstr, end=end_utcstr, granularity=granularity)
             if not bool(kline):
                 break
 

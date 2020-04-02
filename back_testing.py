@@ -11,7 +11,7 @@ from lib.strategy.long_selling import LongSellingStrategy as lss
 from lib.pandas_module import PandasModule
 
 # 初始化pandas参数
-PandasModule.init(pd=pd)
+PandasModule.init()
 
 instrument_id = 'BTC-USDT'
 # instrument_id = 'EOS-USDT'
@@ -22,10 +22,8 @@ kline_length = 2 * 24 * 60
 result = PandasModule.get_data_from_mongo(instrument_id, start_time=start_time, kline_length=kline_length)
 
 df = pd.DataFrame(result)
-# df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
+df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
 
-# print(type(df.iloc[0]['candle_begin_time']))
-# exit()
 # 重采样
 kline_rule = 5
 df = PandasModule.resample(df, kline_rule=kline_rule)
@@ -55,19 +53,20 @@ from lib.indicator.boll_indicator import BollIndicator
 BollIndicator.get_value(df=df)
 
 # obv指标
-from lib.indicator.obv_indicator import ObvIndicator
-ObvIndicator.get_value(df=df)
-print(df)
-exit()
+# from lib.indicator.obv_indicator import ObvIndicator
+# ObvIndicator.get_value(df=df)
+# print(df)
+# exit()
+
 # ==== 标记信号 ====
 # 做多信号
 # lps.lower_rsi_next(df=df)
-# lps.macd_upward_through(df=df)
-lps.boll_upward_through(df=df)
+lps.macd_upward_through(df=df)
+# lps.boll_upward_through(df=df)
 
 # 做多平仓信号
-# lss.find_rsi_top(df=df)
-lss.boll_downward_through(df=df)
+lss.find_rsi_top(df=df)
+# lss.boll_downward_through(df=df)
 # print(df[['candle_begin_time', 'close', 'rsi6', 'signal_lp', 'signal_ls']])
 # exit()
 
