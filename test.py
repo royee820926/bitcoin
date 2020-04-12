@@ -5,6 +5,13 @@ from lib.api.okex.account_api import AccountApi
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.index_api import IndexApi
 
+# import re
+# line = 'rsi'
+# obj = re.match(r'^rsi\d{1,2}$', line)
+# # print(obj.group())
+# print(obj)
+# exit()
+
 # instrument_id = 'BTC-USDT'
 # kline = SpotApi.get_kline(instrument_id=instrument_id)
 # kline = list(reversed(kline))

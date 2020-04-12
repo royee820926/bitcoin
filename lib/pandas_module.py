@@ -2,6 +2,7 @@
 
 import time
 from lib.db.mongo_handler import get_spot_collection
+from lib.db.mongo_handler import MongoHandle
 from lib.api.okex.spot_api import SpotApi
 import pandas as pd
 
@@ -21,9 +22,9 @@ class PandasModule:
     @classmethod
     def get_data_from_mongo(cls, instrument_id, start_time, kline_length=2*24*60):
         """
-        从数据库中获取数据（默认倒序）
+        从数据库中获取现货数据（默认倒序）
         :param instrument_id:
-        :param start_time:
+        :param start_time: 开始时间戳
         :param kline_length: K线数据的分钟数（默认2天）
         :return:
         """
@@ -77,12 +78,13 @@ class PandasModule:
             })
 
     @classmethod
-    def resample(cls, df, kline_rule=5):
+    def resample(cls, df, rule_type=5):
         """
         重采样
+        :param df:
+        :param rule_type: （如：5T 5分钟K线）
         :return:
         """
-        rule_type = '%dT' % kline_rule
         period_df = df.resample(rule=rule_type, on='candle_begin_time', label='left', closed='left').agg({
             'open': 'first',
             'high': 'max',

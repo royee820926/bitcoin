@@ -1,5 +1,7 @@
 # encoding=utf-8
 
+from lib.indicator.base_indicator import BaseIndicator
+
 
 class LongPositionStrategy:
     """
@@ -34,6 +36,9 @@ class LongPositionStrategy:
         :param df: 依赖值: dif, dea, rsi6
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['dif', 'dea', 'macd_bar'])
+
         # 判断dif、dea粘合
         dif_conf = (df['dif'] < cls._max_macd_overlap) & (df['dif'] > cls._min_macd_overlap)
         dea_conf = (df['dea'] < cls._max_macd_overlap) & (df['dea'] > cls._min_macd_overlap)
@@ -52,6 +57,9 @@ class LongPositionStrategy:
         :param before_number: 需要判断前面的n个柱线
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['macd_bar', 'ma60'])
+
         # macd柱线小于0，并且大于前面的柱线；收盘价小于MA60均线
         macd_conf = (df['macd_bar'] < 0) & (df['macd_bar'] > df['macd_bar'].shift(1)) & (df['close'] < df['ma60'])
         if before_number > 0:
@@ -68,6 +76,9 @@ class LongPositionStrategy:
         :param df: 依赖值: rsi6, macd_bar
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['rsi6'])
+
         # 前一条rsi指标低于rsi_lower_limit，rsi6指标高于前一条rsi指标
         rsi_conf = (df['rsi6'].shift(1) < cls._rsi_lower_limit) & (df['rsi6'] > df['rsi6'].shift(1))
         # macd柱线
@@ -84,6 +95,9 @@ class LongPositionStrategy:
         :param df: 依赖值: dif, dea, macd_bar
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['dif', 'dea', 'macd_bar'])
+
         macd_conf  = (df['macd_bar'] > 0) & (df['macd_bar'].shift(1) < 0) & (df['dea'].shift(1) < 0)
         dif_conf   = (df['dif'] > df['dea']) & (df['dif'].shift(1) < df['dea'].shift(1))
         df.loc[macd_conf & dif_conf, cls._signal_key] = cls._signal
@@ -96,7 +110,10 @@ class LongPositionStrategy:
         :param df:
         :return:
         """
-        boll_conf = (df['close'] > df['upper']) & (df['close'].shift(1) < df['upper'].shift(1))
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['boll_upper'])
+
+        boll_conf = (df['close'] > df['boll_upper']) & (df['close'].shift(1) < df['boll_upper'].shift(1))
         df.loc[boll_conf, cls._signal_key] = cls._signal
         return True
 

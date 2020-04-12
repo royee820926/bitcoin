@@ -24,9 +24,9 @@ result = PandasModule.get_data_from_mongo(instrument_id, start_time=start_time, 
 df = pd.DataFrame(result)
 df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
 
-# 重采样
-kline_rule = 5
-df = PandasModule.resample(df, kline_rule=kline_rule)
+# 重采样（5分钟采样）
+rule_type = '5T'
+df = PandasModule.resample(df, rule_type=rule_type)
 
 # 计算移动平均线
 # df['ma7']  = df['close'].rolling(7, min_periods=1).mean()

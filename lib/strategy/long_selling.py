@@ -1,7 +1,7 @@
 # encoding=utf-8
 
-import pandas as pd
 from lib.strategy.long_position import LongPositionStrategy as lps
+from lib.indicator.base_indicator import BaseIndicator
 
 
 class LongSellingStrategy:
@@ -27,6 +27,9 @@ class LongSellingStrategy:
         :param df: 依赖值: macd_bar, ma60, close, rsi6
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['ma60', 'rsi6'])
+
         # 收盘价处于MA60均线上方
         close_conf = df['close'] > df['ma60']
         # rsi6 超卖
@@ -42,6 +45,9 @@ class LongSellingStrategy:
         :param inc_num:
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['macd_bar'])
+
         if inc_num <= 0:
             return False
         low_conf = df['macd_bar'] < df['macd_bar'].shift(1)
@@ -58,7 +64,10 @@ class LongSellingStrategy:
         :param df:
         :return:
         """
-        boll_conf = (df['close'] < df['upper']) & (df['close'].shift(1) > df['upper'].shift(1))
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['boll_upper'])
+
+        boll_conf = (df['close'] < df['boll_upper']) & (df['close'].shift(1) > df['boll_upper'].shift(1))
         df.loc[boll_conf, cls._signal_key] = cls._signal
         return True
 
@@ -69,6 +78,9 @@ class LongSellingStrategy:
         :param df:
         :return:
         """
+        # 计算需要的指标
+        BaseIndicator.rely_on_indicator(df, ['rsi6'])
+
         # 查询做多信号为1的记录（创建副本）
         long_signal = df[df[lps.get_signal_key()] == 1].copy()
 
@@ -90,7 +102,6 @@ class LongSellingStrategy:
         for item in long_signal.iterrows():
             index = item[0]
             cls.one_rsi_top(df, index)
-
 
     @classmethod
     def one_rsi_top(cls, df, base_index):
