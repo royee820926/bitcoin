@@ -1,5 +1,6 @@
 # encoding=utf-8
 
+from lib.common import TimeOption
 from lib.api.okex.swap_api import SwapApi
 import pandas as pd
 from lib.pandas_module import PandasModule
@@ -30,7 +31,18 @@ class Production:
         instrument_id = 'BTC-USD-SWAP'
         # 获取一天的分钟K线数据
         df = cls.get_data(instrument_id)
+        # 取最后一条的时间，作为后续读取的时间
+        last_one = df.iloc[len(df)-1]
+        last_time = last_one['candle_begin_time']
+        last_timestamp = TimeOption.string2timestamp(str(last_time), '%Y-%m-%d %H:%M:%S')
 
+        # 添加下一分钟的数据
+        df = cls.append_one_swap_from_mongo(instrument_id, df=df, start_time=(last_timestamp + 60))
+
+        # 删除第一条数据
+        cls.delete_first_one(df)
+        print(df)
+        exit()
         # 重采样（5分钟采样）
         rule_type = '5T'
         df = PandasModule.resample(df=df, rule_type=rule_type)
@@ -56,11 +68,11 @@ class Production:
         # result = cls.get_spot_from_mongo(instrument_id, as_df=as_df)
 
         # 历史数据测试
-        # 数据库起始时间 1578203340
-        start_time = 1578203340
+        # 数据库起始时间 2020-01-05 13:49:00 -> 1578203340
+        start_time = '2020-01-05 13:49:00'
+        start_time = int(TimeOption.string2timestamp(start_time, '%Y-%m-%d %H:%M:%S'))
         result = cls.get_swap_from_mongo(instrument_id, start_time=start_time, as_df=as_df)
-        print(result)
-        exit()
+
         return result
 
     @classmethod
@@ -126,6 +138,8 @@ class Production:
             })
         if time_sort == -1:
             result = list(reversed(result))
+
+        # 判断是否需要转换成DataFrame
         if as_df:
             df = pd.DataFrame(result)
             df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
@@ -133,11 +147,41 @@ class Production:
         return result
 
     @classmethod
-    def append_data(cls, df, ):
+    def append_one_swap_from_mongo(cls, instrument_id, df, start_time):
         """
-        追加数据
+        从MongoDB追加合约数据
+        :param instrument_id:
+        :param df: 结果存入DataFrame
+        :param start_time: 读取记录的时间
+        :return:
+        """
+        collection = MongoHandle.get_swap_collection(instrument_id)
+        result = collection.find_one({"time": int(start_time)})
+
+        if result is not None:
+            data = {
+                'candle_begin_time': TimeOption.timestamp2string(result['time']),
+                'open': float(result['open']),
+                'high': float(result['high']),
+                'low': float(result['low']),
+                'close': float(result['close']),
+                'volume': float(result['volume']),
+            }
+            return df.append(data, ignore_index=True)
+        else:
+            return None
+
+    @classmethod
+    def delete_first_one(cls, df):
+        """
+        DataFrame 删除第一条数据
         :param df:
         :return:
         """
-        pass
+        df.drop(index=0, inplace=True)
+        df.reset_index(inplace=True, drop=True)
+        # for item in df.iterrows():
+        #     df_index = item[0]
+        #     df.drop(index=df_index, inplace=True)
+        #     break
 

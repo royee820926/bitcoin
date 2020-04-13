@@ -70,6 +70,25 @@ class TimeOption:
         return time.strftime(format_str, date_time.timetuple())
 
     @classmethod
+    def timestamp2string(cls, timestamp, format_str='%Y-%m-%d %H:%M:%S'):
+        """
+        时间戳转字符串
+        :param timestamp:
+        :param format_str:
+        :return:
+        """
+        return time.strftime(format_str, cls.timestamp2datetime(timestamp))
+
+    @classmethod
+    def timestamp2datetime(cls, timestamp):
+        """
+        时间戳转datetime
+        :param timestamp:
+        :return:
+        """
+        return time.localtime(timestamp)
+
+    @classmethod
     def set_datetime(cls, time_array, **params):
         """
         设置datetime
