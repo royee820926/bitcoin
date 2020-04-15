@@ -6,7 +6,28 @@
 # 4、发送邮件
 # 5、记录日志
 
-
 from lib.production.production import Production as prod
+import sys
 
-prod.run()
+
+if __name__ == '__main__':
+    # python production.py --env=test
+    command = {}
+    index = 0
+    for comm in sys.argv:
+        if index == 0:
+            index += 1
+            continue
+        comm = comm.replace('-', '')
+        comm_list = comm.split('=')
+        if len(comm_list) == 2 and comm_list[0] != '':
+            command[comm_list[0]] = comm_list[1]
+
+    if command['env'] == 'test':
+        # test.run()
+        pass
+    elif command['env'] == 'prod':
+        prod.run()
+
+
+
