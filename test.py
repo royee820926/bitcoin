@@ -7,10 +7,11 @@ from lib.api.okex.index_api import IndexApi
 
 # 计算资金收益
 from lib.common import FundCalculator as fc
-# result = fc.long_leverage_income(in_price=40.34, out_price=40.73, fund=10000, leverage_rate=50)
-# print(result)
-result = fc.short_leverage_income(in_price=40.93, out_price=40.04, fund=100, leverage_rate=50)
-print(result)
+lg = fc.long_leverage_income(in_price=9, out_price=10, fund=100, leverage_rate=2)
+print(lg)
+st = fc.short_leverage_income(in_price=10, out_price=9, fund=100, leverage_rate=2)
+print(st)
+print((lg - st) / st)
 exit()
 
 # import re

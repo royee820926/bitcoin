@@ -139,7 +139,6 @@ class FundCalculator:
         repayment_number = total_fund / in_price
         repayment = out_price * repayment_number * (1 + cls.__leverage_charge_rate)
         result = total_fund - repayment - fund
-        print(total_fund , repayment , fund)
         return result
 
 
