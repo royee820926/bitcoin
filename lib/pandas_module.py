@@ -49,6 +49,101 @@ class PandasModule:
         return result
 
     @classmethod
+    def get_swap_from_mongo(cls, instrument_id, start_time=0, end_time=0, kline_length=2 * 24 * 60, as_df=True):
+        """
+        从数据库中获取合约数据（默认倒序）
+        :param instrument_id:
+        :param start_time: 开始时间戳
+        :param end_time: 结束时间戳（下不包含）
+        :param kline_length: K线数据的分钟数（默认2天）
+        :param as_df: 获取结果后，是否转换成DataFrame
+        :return:
+        """
+        result = []
+        limit = 0
+        time_sort = 1
+        collection = MongoHandle.get_swap_collection(instrument_id)
+
+        # 判断查询条件和返回条数
+        if start_time != 0 and end_time != 0:
+            condition = {"time": {"$gte": int(start_time), "$lt": int(end_time)}}
+        elif start_time != 0:
+            condition = {"time": {"$gte": int(start_time)}}
+            limit = kline_length
+        elif end_time != 0:
+            condition = {"time": {"$lt": int(end_time)}}
+            limit = kline_length
+            time_sort = -1
+        else:
+            # 没有开始结束时间，则end_time为当前时间戳
+            end_time = int(time.time())
+            condition = {"time": {"$lt": int(end_time)}}
+            limit = kline_length
+            time_sort = -1
+
+        temp = collection.find(condition).sort([('time', time_sort)])
+        if limit > 0:
+            temp = temp.limit(kline_length)
+        # 添加结果
+        for item in temp:
+            result.append({
+                'candle_begin_time': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(item['time'])),
+                'open': float(item['open']),
+                'high': float(item['high']),
+                'low': float(item['low']),
+                'close': float(item['close']),
+                'volume': float(item['volume']),
+            })
+        if time_sort == -1:
+            result = list(reversed(result))
+
+        # 判断是否需要转换成DataFrame
+        if as_df:
+            df = pd.DataFrame(result)
+            df['candle_begin_time'] = pd.to_datetime(df['candle_begin_time'], format='%Y-%m-%d %H:%M:%S')
+            return df
+        return result
+
+    @classmethod
+    def append_one_swap_from_mongo(cls, instrument_id, df, start_time):
+        """
+        从MongoDB追加合约数据
+        :param instrument_id:
+        :param df: 结果存入DataFrame
+        :param start_time: 读取记录的时间
+        :return:
+        """
+        collection = MongoHandle.get_swap_collection(instrument_id)
+        result = collection.find_one({"time": int(start_time)})
+
+        if result is not None:
+            data = {
+                'candle_begin_time': TimeOption.timestamp2string(result['time']),
+                'open': float(result['open']),
+                'high': float(result['high']),
+                'low': float(result['low']),
+                'close': float(result['close']),
+                'volume': float(result['volume']),
+            }
+            return df.append(data, ignore_index=True)
+        else:
+            return None
+
+    @classmethod
+    def delete_first_one(cls, df):
+        """
+        DataFrame 删除第一条数据
+        :param df:
+        :return:
+        """
+        df.drop(index=0, inplace=True)
+        df.reset_index(inplace=True, drop=True)
+        # for item in df.iterrows():
+        #     df_index = item[0]
+        #     df.drop(index=df_index, inplace=True)
+        #     break
+
+    @classmethod
     def kline_complete(cls, instrument_id, result):
         """
         补全K线（即将废弃）

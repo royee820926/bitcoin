@@ -100,3 +100,46 @@ class TimeOption:
             if key == 'second':
                 time_array = time_array.replace(second=val)
         return time_array
+
+class FundCalculator:
+    """
+    资金计算
+    """
+    __leverage_charge_rate = 0.0005
+
+    @classmethod
+    def long_leverage_income(cls, in_price, out_price, fund, leverage_rate):
+        """
+        做多杠杆收益
+        :param in_price: 买入价格
+        :param out_price: 卖出价格
+        :param fund: 本金资金
+        :param leverage_rate: 杠杆倍数
+        :return:
+        """
+        total_fund = fund * leverage_rate
+        repayment  = total_fund - fund
+        # 上涨后的总资金
+        final_fund = total_fund * (1 - cls.__leverage_charge_rate) / in_price * out_price * (1 - cls.__leverage_charge_rate)
+        result = final_fund - repayment - fund
+        return result
+
+    @classmethod
+    def short_leverage_income(cls, in_price, out_price, fund, leverage_rate):
+        """
+        做空杠杆收益
+        :param in_price:
+        :param out_price:
+        :param fund:
+        :param leverage_rate:
+        :return:
+        """
+        total_fund = fund * leverage_rate
+        # 归还数量
+        repayment_number = total_fund / in_price
+        repayment = out_price * repayment_number * (1 + cls.__leverage_charge_rate)
+        result = total_fund - repayment - fund
+        print(total_fund , repayment , fund)
+        return result
+
+
