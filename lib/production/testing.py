@@ -42,15 +42,20 @@ class Testing:
         # # 删除第一条数据
         # cls.delete_first_one(df)
 
-        # 重采样（5分钟采样）
-        rule_type = '5T'
-        df = PandasModule.resample(df=df, rule_type=rule_type)
-
-        # 1、循环加入数据后
-        # 2、产生买卖信号
+        # 1、数据重采样
+        # 2、产生买卖信号，判断趋势等关键属性
         # 3、计算收益率
+        # 4、追加新的K线数据，删除第一条K线数据
         while True:
-            pass
+            # 重采样（5分钟采样）
+            rule_type = '5T'
+            df5 = PandasModule.resample(df=df, rule_type=rule_type)
+
+            # 产生交易信号
+
+
+
+
 
         # 做多信号
         lps.boll_upward_through(df=df)

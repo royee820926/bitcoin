@@ -122,7 +122,7 @@ class FundCalculator:
         # 上涨后的总资金
         final_fund = total_fund * (1 - cls.__leverage_charge_rate) / in_price * out_price * (1 - cls.__leverage_charge_rate)
         result = final_fund - repayment - fund
-        return result
+        return round(result, 7)
 
     @classmethod
     def short_leverage_income(cls, in_price, out_price, fund, leverage_rate):
@@ -138,7 +138,7 @@ class FundCalculator:
         # 归还数量
         repayment_number = total_fund / in_price
         repayment = out_price * repayment_number * (1 + cls.__leverage_charge_rate)
-        result = total_fund - repayment - fund
-        return result
+        result = total_fund - repayment
+        return round(result, 7)
 
 
