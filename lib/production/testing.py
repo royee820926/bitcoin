@@ -18,7 +18,7 @@ class Testing:
     @classmethod
     def run(cls):
         """
-        实盘入
+        模拟实盘
         :return:
         """
         # pandas 初始化参数
@@ -26,7 +26,7 @@ class Testing:
 
         # 获取当前合约数据（历史或实盘）
         # 指定合约数据类型
-        instrument_id = 'LTC-USD-SWAP'
+        instrument_id = 'BCH-USD-SWAP'
         # 获取一天的分钟K线数据
         df = cls.get_data(instrument_id)
 
