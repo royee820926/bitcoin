@@ -71,7 +71,7 @@ class Production:
         # 数据库起始时间 2020-01-05 13:49:00 -> 1578203340
         start_time = '2020-01-05 13:49:00'
         start_time = int(TimeOption.string2timestamp(start_time, '%Y-%m-%d %H:%M:%S'))
-        result = cls.get_swap_from_mongo(instrument_id, start_time=start_time, as_df=as_df)
+        result = PandasModule.get_swap_from_mongo(instrument_id, start_time=start_time, as_df=as_df)
 
         return result
 

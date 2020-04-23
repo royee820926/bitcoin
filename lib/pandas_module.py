@@ -3,6 +3,7 @@
 import time
 from lib.db.mongo_handler import get_spot_collection
 from lib.db.mongo_handler import MongoHandle
+from lib.common import TimeOption
 from lib.api.okex.spot_api import SpotApi
 import pandas as pd
 

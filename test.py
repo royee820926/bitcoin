@@ -4,15 +4,16 @@ import time
 from lib.api.okex.account_api import AccountApi
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.index_api import IndexApi
-
+import math
 # 计算资金收益
-from lib.common import FundCalculator as fc
-lg = fc.long_leverage_income(in_price=9, out_price=10, fund=100, leverage_rate=2)
-print(lg)
-st = fc.short_leverage_income(in_price=10, out_price=9, fund=100, leverage_rate=2)
-print(st)
-print((lg - st) / st)
-exit()
+
+
+# from lib.common import FundCalculator as fc
+# lg = fc.long_leverage_income(in_price=9, out_price=10, fund=100, leverage_rate=2)
+# print(lg)
+# st = fc.short_leverage_income(in_price=9, out_price=8, fund=100, leverage_rate=2)
+# print(st)
+# exit()
 
 # import re
 # line = 'rsi'
