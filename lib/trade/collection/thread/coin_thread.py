@@ -4,7 +4,7 @@ import threading
 import time
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.swap_api import SwapApi
-from lib.common import get_dict, TimeOption
+from lib.common import get_dict, TimeOperation
 from lib.trade.collection.volume_store import VolumeStore
 
 
@@ -67,7 +67,7 @@ class CoinThread(threading.Thread):
                 # ISO8601 时间转换
                 # 转成北京时间
                 format_str = '%Y-%m-%dT%H:%M:%S.%fZ'
-                time_array = TimeOption.string2datetime(trade_item['timestamp'], format_str, hours=8)
+                time_array = TimeOperation.string2datetime(trade_item['timestamp'], format_str, hours=8)
                 # 基准时间秒数（以5秒为单位的时间起点的时间戳）
                 tm_second = time_array.second
                 # 基准秒数（以基准秒数转换后的时间戳作为列表索引）
@@ -75,11 +75,11 @@ class CoinThread(threading.Thread):
                 temp = tm_second % 5
                 base_second = tm_second - temp
                 # 分钟整点的datetime
-                minute_array = TimeOption.set_datetime(time_array, second=0)
+                minute_array = TimeOperation.set_datetime(time_array, second=0)
                 # 设置基准秒数
-                time_array = TimeOption.set_datetime(time_array, second=base_second)
+                time_array = TimeOperation.set_datetime(time_array, second=base_second)
                 # 设置基准时间戳
-                base_timestamp = TimeOption.datetime2timestamp(time_array)
+                base_timestamp = TimeOperation.datetime2timestamp(time_array)
 
                 trade_id = trade_item['trade_id']
                 price = float(trade_item['price'])
@@ -111,7 +111,7 @@ class CoinThread(threading.Thread):
                 ##########################
                 # 1分钟交易量汇总，准备入库 #
                 ##########################
-                base_minute_time = TimeOption.datetime2timestamp(minute_array)
+                base_minute_time = TimeOperation.datetime2timestamp(minute_array)
                 # 初始化
                 if not VolumeStore.is_timestamp_in_volume(self.getName(), base_minute_time):
                     # 初始化

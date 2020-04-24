@@ -3,7 +3,7 @@
 import time
 from lib.db.mongo_handler import get_spot_collection
 from lib.db.mongo_handler import MongoHandle
-from lib.common import TimeOption
+from lib.common import TimeOperation
 from lib.api.okex.spot_api import SpotApi
 import pandas as pd
 
@@ -119,7 +119,7 @@ class PandasModule:
 
         if result is not None:
             data = {
-                'candle_begin_time': TimeOption.timestamp2string(result['time']),
+                'candle_begin_time': TimeOperation.timestamp2string(result['time']),
                 'open': float(result['open']),
                 'high': float(result['high']),
                 'low': float(result['low']),

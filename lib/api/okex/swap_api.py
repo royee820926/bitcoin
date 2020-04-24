@@ -3,7 +3,7 @@
 import time
 from lib.okex import swap_api
 from lib.api.okex.base import ApiBase
-from lib.common import TimeOption
+from lib.common import TimeOperation
 
 
 class SwapApi(ApiBase):
@@ -69,8 +69,8 @@ class SwapApi(ApiBase):
             for index in range(len(kline) - 1, -1, -1):
                 # ISO8601 to string for +8:00
                 time_8601 = kline[index][0]
-                date_time = TimeOption.string2datetime(time_8601, '%Y-%m-%dT%H:%M:00.000Z', hours=8)
-                candle_begin_time = TimeOption.datetime2string(date_time)
+                date_time = TimeOperation.string2datetime(time_8601, '%Y-%m-%dT%H:%M:00.000Z', hours=8)
+                candle_begin_time = TimeOperation.datetime2string(date_time)
 
                 result.append({
                     'candle_begin_time': candle_begin_time,

@@ -1,6 +1,6 @@
 # encoding=utf-8
 
-from lib.common import TimeOption
+from lib.common import TimeOperation
 from lib.api.okex.swap_api import SwapApi
 import pandas as pd
 from lib.pandas_module import PandasModule
@@ -34,7 +34,7 @@ class Testing:
         last_one = df.iloc[len(df)-1]
         last_time = last_one['candle_begin_time']
         # 时间戳
-        last_timestamp = TimeOption.string2timestamp(str(last_time), '%Y-%m-%d %H:%M:%S')
+        last_timestamp = TimeOperation.string2timestamp(str(last_time), '%Y-%m-%d %H:%M:%S')
         next_timestamp = last_timestamp + 60
 
         # # 添加下一分钟的数据
@@ -74,7 +74,7 @@ class Testing:
         # 历史数据测试
         # 数据库起始时间 2020-01-05 13:49:00 -> 1578203340
         start_time = '2020-01-05 13:49:00'
-        start_time = int(TimeOption.string2timestamp(start_time, '%Y-%m-%d %H:%M:%S'))
+        start_time = int(TimeOperation.string2timestamp(start_time, '%Y-%m-%d %H:%M:%S'))
         result = PandasModule.get_swap_from_mongo(instrument_id, start_time=start_time, as_df=as_df)
 
         return result

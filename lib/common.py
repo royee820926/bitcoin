@@ -22,7 +22,7 @@ def get_dict(value, *param):
     return result
 
 
-class TimeOption:
+class TimeOperation:
     @classmethod
     def string2datetime(cls, time_str, format_str, hours=0):
         """
