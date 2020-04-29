@@ -55,13 +55,20 @@ class Testing:
             # 产生交易信号
             # RSI6
             RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
+            # 去除rsi开头的空行
             df5t = df5t[df5t['rsi6'].notnull()]
-            # df5t.loc[df5t['rsi6'].min(), 'signal'] = 1
-            df5t.loc[df5t[['rsi6']].min(), 'signal'] = 1
-            temp = df5t.groupby('start_time').apply(lambda x: x['close'] / x.iloc[0]['close'] * x.iloc[0]['position'])
-            df['position'] = temp['close']
-            # print(df5t['rsi6'].min())
-            print(df5t[['rsi6']].min())
+
+            # 找出rsi最低点，设为买入价格的初始值
+            min_rsi6 = df5t['rsi6'].min(axis=0)
+            df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
+
+            # 从signal == 1处开始遍历
+            # 遍历DataFrame，查找K线相关的支撑和形态
+            from_index = df5t.loc[df5t['signal'] == 1].index
+            while True:
+                pass
+
+            print(from_index + 2)
             exit()
 
 
@@ -82,8 +89,8 @@ class Testing:
         # result = cls.get_spot_from_mongo(instrument_id, as_df=as_df)
 
         # 历史数据测试
-        # 公司数据起始时间： 2020-01-05 13:49:00 -> 1578203340
-        # 家中数据起始时间：
+        # 数据起始时间：2020-01-05 13:49:00 -> 1578203340
+
         # 默认起始时间
         if not bool(start_time):
             start_time = '2020-01-05 13:49:00'
