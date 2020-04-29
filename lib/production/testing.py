@@ -9,6 +9,7 @@ from lib.strategy.long_position import LongPositionStrategy as lps
 from lib.strategy.long_selling import LongSellingStrategy as lss
 
 from lib.pandas_module import PandasModule
+from lib.indicator.rsi_indicator import RsiIndicator
 
 
 class Testing:
@@ -49,10 +50,19 @@ class Testing:
         while True:
             # 重采样（5分钟采样）
             rule_type = '5T'
-            df5 = PandasModule.resample(df=df, rule_type=rule_type)
+            df5t = PandasModule.resample(df=df, rule_type=rule_type)
 
             # 产生交易信号
-
+            # RSI6
+            RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
+            df5t = df5t[df5t['rsi6'].notnull()]
+            # df5t.loc[df5t['rsi6'].min(), 'signal'] = 1
+            df5t.loc[df5t[['rsi6']].min(), 'signal'] = 1
+            temp = df5t.groupby('start_time').apply(lambda x: x['close'] / x.iloc[0]['close'] * x.iloc[0]['position'])
+            df['position'] = temp['close']
+            # print(df5t['rsi6'].min())
+            print(df5t[['rsi6']].min())
+            exit()
 
 
 
@@ -67,13 +77,16 @@ class Testing:
         exit()
 
     @classmethod
-    def get_data(cls, instrument_id, as_df=True):
+    def get_data(cls, instrument_id, as_df=True, start_time=''):
         # result = cls.get_data_from_api(instrument_id, as_df=as_df)
         # result = cls.get_spot_from_mongo(instrument_id, as_df=as_df)
 
         # 历史数据测试
-        # 数据库起始时间 2020-01-05 13:49:00 -> 1578203340
-        start_time = '2020-01-05 13:49:00'
+        # 公司数据起始时间： 2020-01-05 13:49:00 -> 1578203340
+        # 家中数据起始时间：
+        # 默认起始时间
+        if not bool(start_time):
+            start_time = '2020-01-05 13:49:00'
         start_time = int(TimeOperation.string2timestamp(start_time, '%Y-%m-%d %H:%M:%S'))
         result = PandasModule.get_swap_from_mongo(instrument_id, start_time=start_time, as_df=as_df)
 
