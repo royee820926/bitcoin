@@ -66,7 +66,8 @@ class Testing:
             # 遍历DataFrame，查找K线相关的支撑和形态
             from_index = df5t.loc[df5t['signal'] == 1].index
             while True:
-                pass
+                print(df5t.loc[from_index])
+                exit()
 
             print(from_index + 2)
             exit()
