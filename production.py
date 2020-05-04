@@ -1,5 +1,5 @@
 # encoding=utf-8
-# python production.py --env=test
+# python production.py --env=test<默认>
 # python production.py --env=prod
 # 生产环境
 # 1、从接口获取数据
