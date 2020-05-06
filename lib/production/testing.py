@@ -56,7 +56,9 @@ class Testing:
             # RSI6
             RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
             # 去除rsi开头的空行
-            df5t = df5t[df5t['rsi6'].notnull()]
+            df5t.dropna(axis=0, how='any', inplace=True)
+            # df5t = df5t[df5t['rsi6'].notnull()]
+
 
             # 找出rsi最低点，设为买入价格的初始值
             min_rsi6 = df5t['rsi6'].min(axis=0)
