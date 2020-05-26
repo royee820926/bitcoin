@@ -75,8 +75,8 @@ from test.spot_trade_test import SpotTradeTest
 
 SpotTradeTest.money_curve(df=df, init_cash=1000, leverage_rate=30)
 
-# print(df[['candle_begin_time', 'close', 'rsi6', 'signal', 'pos', 'equity_change', 'equity_curve']])
-print(df)
+print(df[['candle_begin_time', 'close', 'rsi6', 'signal', 'pos', 'equity_change', 'equity_curve']])
+# print(df)
 # print(df[df['signal'].notnull()])
 exit()
 

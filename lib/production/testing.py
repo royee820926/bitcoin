@@ -28,7 +28,7 @@ class Testing:
         # 获取当前合约数据（历史或实盘）
         # 指定合约数据类型
         instrument_id = 'BCH-USD-SWAP'
-        # 获取一天的分钟K线数据
+        # 获取2天的分钟K线数据（默认2天）
         df = cls.get_data(instrument_id)
 
         # 取最后一条的时间，作为后续读取的时间
@@ -47,44 +47,48 @@ class Testing:
         # 2、产生买卖信号，判断趋势等关键属性
         # 3、计算收益率
         # 4、追加新的K线数据，删除第一条K线数据
+
+        # 遍历初始数据
+        # 没有确定支撑阻力前，使用简单策略
+        # 重采样（5分钟采样）
+        rule_type = '5T'
+        df5t = PandasModule.resample(df=df, rule_type=rule_type)
+
+        # 产生交易信号
+        # RSI6
+        RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
+        # 去除rsi开头的空行
+        df5t.dropna(axis=0, how='any', inplace=True)
+        # df5t = df5t[df5t['rsi6'].notnull()]
+
+
+        # 找出rsi最低点，设为买入价格的初始值
+        min_rsi6 = df5t['rsi6'].min(axis=0)
+        df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
+
+        # 从signal == 1处开始遍历
+        # 遍历DataFrame，查找K线相关的支撑和形态
+        from_index = df5t.loc[df5t['signal'] == 1].index
+        print(from_index)
+        exit()
         while True:
-            # 重采样（5分钟采样）
-            rule_type = '5T'
-            df5t = PandasModule.resample(df=df, rule_type=rule_type)
-
-            # 产生交易信号
-            # RSI6
-            RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
-            # 去除rsi开头的空行
-            df5t.dropna(axis=0, how='any', inplace=True)
-            # df5t = df5t[df5t['rsi6'].notnull()]
-
-
-            # 找出rsi最低点，设为买入价格的初始值
-            min_rsi6 = df5t['rsi6'].min(axis=0)
-            df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
-
-            # 从signal == 1处开始遍历
-            # 遍历DataFrame，查找K线相关的支撑和形态
-            from_index = df5t.loc[df5t['signal'] == 1].index
-            while True:
-                print(df5t.loc[from_index])
-                exit()
-
-            print(from_index + 2)
+            print(df5t.loc[from_index])
             exit()
 
-
-
-
-        # 做多信号
-        lps.boll_upward_through(df=df)
-
-        # 做多平仓
-        lss.boll_downward_through(df=df)
-
-        print(df)
+        print(from_index + 2)
         exit()
+
+
+
+
+        # # 做多信号
+        # lps.boll_upward_through(df=df)
+        #
+        # # 做多平仓
+        # lss.boll_downward_through(df=df)
+        #
+        # print(df)
+        # exit()
 
     @classmethod
     def get_data(cls, instrument_id, as_df=True, start_time=''):

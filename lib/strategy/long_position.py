@@ -91,7 +91,7 @@ class LongPositionStrategy:
     @classmethod
     def macd_upward_through(cls, df):
         """
-        macd线上穿越
+        macd线上穿越0轴，由负变正
         :param df: 依赖值: dif, dea, macd_bar
         :return:
         """
