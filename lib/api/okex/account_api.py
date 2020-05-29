@@ -12,7 +12,7 @@ class AccountApi(ApiBase):
         :return:
         """
         if cls._account_api is None:
-            cls._account_api = account_api.AccountAPI(cls._api_key, cls._secret_key, cls._passphrase, True)
+            cls._account_api = account_api.AccountAPI(cls.get_api_key(), cls.get_secret_key(), cls.get_passphrase(), True)
         return cls._account_api
 
     @classmethod
@@ -22,6 +22,14 @@ class AccountApi(ApiBase):
         :return:
         """
         return cls.get_instance().get_wallet()
+
+    @classmethod
+    def get_currency(cls, currency):
+        """
+        获取指定的币种信息
+        :return:
+        """
+        return cls.get_instance().get_currency(currency)
 
     @classmethod
     def coin_transfer(cls, currency, amount, account_from, account_to, sub_account='', instrument_id='', to_instrument_id=''):

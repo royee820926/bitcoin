@@ -12,7 +12,7 @@ class IndexApi(ApiBase):
         :return:
         """
         if cls._index_api is None:
-            cls._index_api = index_api.IndexAPI(cls._api_key, cls._secret_key, cls._passphrase, True)
+            cls._index_api = index_api.IndexAPI(cls.get_api_key(), cls.get_secret_key(), cls.get_passphrase(), True)
         return cls._index_api
 
     @classmethod

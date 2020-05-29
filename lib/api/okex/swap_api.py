@@ -14,7 +14,7 @@ class SwapApi(ApiBase):
         :return:
         """
         if cls._swap_api is None:
-            cls._swap_api = swap_api.SwapAPI(cls._api_key, cls._secret_key, cls._passphrase, True)
+            cls._swap_api = swap_api.SwapAPI(cls.get_api_key(), cls.get_secret_key(), cls.get_passphrase(), True)
         return cls._swap_api
 
     @classmethod
@@ -28,6 +28,14 @@ class SwapApi(ApiBase):
         :return:
         """
         return cls.get_instance().get_trades(instrument_id=instrument_id, after=after, before=before, limit=limit)
+
+    @classmethod
+    def get_accounts(cls):
+        """
+        获取所有币种合约的账户信息，当用户没有持仓时，保证金率为10000
+        :return:
+        """
+        return cls.get_instance().get_accounts()
 
     @classmethod
     def get_kline(cls, instrument_id, start='', end='', granularity=60):

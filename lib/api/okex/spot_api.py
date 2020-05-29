@@ -12,7 +12,7 @@ class SpotApi(ApiBase):
         :return:
         """
         if cls._spot_api is None:
-            cls._spot_api = spot_api.SpotAPI(cls._api_key, cls._secret_key, cls._passphrase, True)
+            cls._spot_api = spot_api.SpotAPI(cls.get_api_key(), cls.get_secret_key(), cls.get_passphrase(), True)
         return cls._spot_api
 
     @classmethod
@@ -27,7 +27,7 @@ class SpotApi(ApiBase):
     def get_coin_account_info(cls, currency):
         """
         获取指定币种的账户信息
-        :param currency:
+        :param currency: 如：BTC，是get_account_info中的一条
         :return:
         """
         return cls.get_instance().get_coin_account_info(currency)
