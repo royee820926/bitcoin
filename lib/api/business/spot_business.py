@@ -20,7 +20,7 @@ class SpotBusiness:
         return result
 
     @classmethod
-    def take_order_buy(cls, instrument_id, notional, price, client_oid=''):
+    def take_order_buy(cls, instrument_id, notional, price='', client_oid=''):
         """
         市价单-下单
         :param instrument_id:

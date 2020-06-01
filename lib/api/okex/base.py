@@ -4,12 +4,16 @@
 class ApiBase:
     # at corp
     # ip: 114.95.120.190
-    __api_key = '8774854b-819e-4ea3-a48d-f4fff762d249'
-    __secret_key = 'E69D1D2119651B9D8F1B2C0A6E355E1B'
+    # __api_key = '8774854b-819e-4ea3-a48d-f4fff762d249'
+    # __secret_key = 'E69D1D2119651B9D8F1B2C0A6E355E1B'
 
     # at home
     # __api_key = '1d887d8c-2f38-47c6-9482-ea37f48a86c0'
     # __secret_key = 'A54C57C3B55C1B6B3AC084E552C35C8E'
+
+    # without IP
+    __api_key = '14195c7f-2537-4280-8114-b297a56d8531'
+    __secret_key = 'A820E3CFA9F0416BE333EB1D14A58A41'
 
     __passphrase = 'djxp19820926'
 

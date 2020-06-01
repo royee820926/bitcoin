@@ -7,11 +7,13 @@ from lib.api.business.spot_business import SpotBusiness
 # result = AccountBusiness.coin_transfer_from_spot_to_margin(1, 'EOS-USDT')
 # result = AccountBusiness.coin_transfer_from_margin_to_spot(1, 'EOS-USDT')
 
-# 现货下单
-# result = SpotBusiness.make_order_buy(instrument_id='EOS-USDT', size=1, price=1)
-
-result = SpotBusiness.take_order_buy(instrument_id='EOS-USDT', notional=1, price=1)
+# 现价单下单
+result = SpotBusiness.make_order_buy(instrument_id='EOS-USDT', size=1, price=1)
+# 现价单撤销
 # result = SpotBusiness.revoke_buy(instrument_id='EOS-USDT', order_id='4998079771797504')
+# 市价单下单
+# result = SpotBusiness.take_order_buy(instrument_id='EOS-USDT', notional=1)
+
 
 print(result)
 exit()
