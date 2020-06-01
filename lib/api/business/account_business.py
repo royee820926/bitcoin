@@ -1,4 +1,5 @@
 # encoding=utf-8
+# 账户操作
 
 from lib.api.okex.account_api import AccountApi
 from lib.okex.exceptions import OkexAPIException
@@ -6,7 +7,7 @@ from lib.okex.exceptions import OkexAPIException
 
 class AccountBusiness:
     @classmethod
-    def coin_transfer_from_sport_to_margin(cls, amount, to_instrument_id):
+    def coin_transfer_from_spot_to_margin(cls, amount, to_instrument_id):
         """
         资金划转: 现货划转资金到杠杆账户
         account_from: 1、币币；3、交割合约；4、法币账户；5、币币杠杆；6、资金账户

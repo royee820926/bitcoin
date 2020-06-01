@@ -33,13 +33,26 @@ class SpotApi(ApiBase):
         return cls.get_instance().get_coin_account_info(currency)
 
     @classmethod
-    def get_coin_info(cls, type="USDT"):
+    def get_coin_info(cls):
         """
-        币对信息
+        公共-获取全部币对信息
         :param type:
         :return:
         """
         return cls.get_instance().get_coin_info()
+
+    @classmethod
+    def get_one_coin_info(cls, instrument_id):
+        """
+        获取指定币对信息
+        :param instrument_id:
+        :return:
+        """
+        coin_info = cls.get_coin_info()
+        for info in coin_info:
+            if info['instrument_id'] == instrument_id:
+                return info
+        return None
 
     @classmethod
     def take_order(cls, instrument_id, side, client_oid='', type='', size='', price='', order_type='0', notional=''):
@@ -118,10 +131,19 @@ class SpotApi(ApiBase):
     @classmethod
     def get_all_ticker(cls):
         """
-        全部ticker信息
+        公共-获取全部ticker信息
         :return:
         """
         return cls.get_instance().get_ticker()
+
+    @classmethod
+    def get_one_ticker(cls, instrument_id):
+        """
+        公共-获取某个ticker信息
+        :param instrument_id:
+        :return:
+        """
+        return cls.get_instance().get_specific_ticker(instrument_id)
 
     @classmethod
     def get_fills(cls, instrument_id, order_id, after='', before='', limit=''):
@@ -146,15 +168,6 @@ class SpotApi(ApiBase):
         :return:
         """
         return cls.get_instance().get_deal(instrument_id=instrument_id, limit=limit)
-
-    @classmethod
-    def get_specific_ticker(cls, instrument_id):
-        """
-        指定ticker信息
-        :param instrument_id:
-        :return:
-        """
-        return cls.get_instance().get_specific_ticker(instrument_id)
 
     @classmethod
     def get_kline(cls, instrument_id, start='', end='', granularity=60):
