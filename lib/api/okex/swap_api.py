@@ -18,6 +18,60 @@ class SwapApi(ApiBase):
         return cls._swap_api
 
     @classmethod
+    def get_position(cls):
+        """
+        获取账户所有合约的持仓信息。请求此接口，会在数据库遍历所有币对下的持仓数据，有大量的性能消耗,请求频率较低。建议用户传合约ID获取持仓信息。
+        :return:
+        """
+        return cls.get_instance().get_position()
+
+    @classmethod
+    def get_one_position(cls, instrument_id):
+        """
+        获取某个合约的持仓信息
+        :param instrument_id:
+        :return:
+        """
+        return cls.get_instance().get_specific_position(instrument_id=instrument_id)
+
+    @classmethod
+    def get_accounts(cls):
+        """
+        获取所有币种合约的账户信息，当用户没有持仓时，保证金率为10000
+        :return:
+        """
+        return cls.get_instance().get_accounts()
+
+    @classmethod
+    def get_one_account(cls, instrument_id):
+        """
+        获取单个币种合约的账户信息，当用户没有持仓时，保证金率为10000
+        :param instrument_id:
+        :return:
+        """
+        return cls.get_instance().get_coin_account(instrument_id=instrument_id)
+
+    @classmethod
+    def get_settings(cls, instrument_id):
+        """
+        获取某个合约的杠杆倍数，持仓模式
+        :param instrument_id:
+        :return:
+        """
+        return cls.get_instance().get_settings(instrument_id=instrument_id)
+
+    @classmethod
+    def set_leverage(cls, instrument_id, leverage, side):
+        """
+        设定某个合约的杠杆倍数
+        :param instrument_id: 合约名称，如BTC-USD-SWAP,BTC-USDT-SWAP
+        :param leverage: 杠杆倍数，填写1-100的数值
+        :param side: 方向 1:逐仓-多仓；2:逐仓-空仓；3:全仓
+        :return:
+        """
+        return cls.get_instance().set_leverage(instrument_id=instrument_id, leverage=leverage, side=side)
+
+    @classmethod
     def get_trades(cls, instrument_id, after='', before='', limit=''):
         """
         公共-获取成交数据
@@ -30,12 +84,12 @@ class SwapApi(ApiBase):
         return cls.get_instance().get_trades(instrument_id=instrument_id, after=after, before=before, limit=limit)
 
     @classmethod
-    def get_accounts(cls):
+    def get_trade_fee(cls):
         """
-        获取所有币种合约的账户信息，当用户没有持仓时，保证金率为10000
+        获取账户手续费费率
         :return:
         """
-        return cls.get_instance().get_accounts()
+        return cls.get_instance().get_trade_fee()
 
     @classmethod
     def get_kline(cls, instrument_id, start='', end='', granularity=60):

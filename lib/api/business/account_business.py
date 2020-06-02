@@ -46,3 +46,42 @@ class AccountBusiness:
             return False
         return result
 
+    @classmethod
+    def coin_transfer_from_spot_to_swap(cls, amount, to_instrument_id):
+        """
+        资金划转：现货账户划转资金到永续合约账户
+        :param amount:
+        :param to_instrument_id:
+        :return:
+        """
+        currency = 'USDT'
+        account_from = 1
+        account_to = 9
+        try:
+            result = AccountApi.coin_transfer(currency=currency, amount=amount, account_from=account_from,
+                                              account_to=account_to, to_instrument_id=to_instrument_id)
+        except OkexAPIException:
+            # 金额不足
+            return False
+        return result
+
+    @classmethod
+    def coin_transfer_from_swap_to_spot(cls, amount, to_instrument_id):
+        """
+        资金划转：永续合约账户划转资金到现货账户
+        :param amount:
+        :param to_instrument_id:
+        :return:
+        """
+        currency = 'USDT'
+        account_from = 9
+        account_to = 1
+        try:
+            result = AccountApi.coin_transfer(currency=currency, amount=amount, account_from=account_from,
+                                              account_to=account_to, instrument_id=to_instrument_id)
+        except OkexAPIException:
+            # 金额不足
+            return False
+        return result
+
+

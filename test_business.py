@@ -2,21 +2,28 @@
 
 from lib.api.business.account_business import AccountBusiness
 from lib.api.business.spot_business import SpotBusiness
+from lib.api.business.swap_business import SwapBusiness
 
 # business 资金划转
-# result = AccountBusiness.coin_transfer_from_spot_to_margin(1, 'EOS-USDT')
-# result = AccountBusiness.coin_transfer_from_margin_to_spot(1, 'EOS-USDT')
+# result = AccountBusiness.coin_transfer_from_spot_to_margin(1, to_instrument_id='EOS-USDT')
+# result = AccountBusiness.coin_transfer_from_margin_to_spot(1, to_instrument_id='EOS-USDT')
+# result = AccountBusiness.coin_transfer_from_spot_to_swap(1, to_instrument_id='EOS-USDT')
+# result = AccountBusiness.coin_transfer_from_swap_to_spot(1, to_instrument_id='EOS-USDT')
 
-# 现价单下单
-result = SpotBusiness.make_order_buy(instrument_id='EOS-USDT', size=1, price=1)
+# 现货
+# 限价单下单买入
+# result = SpotBusiness.make_order_buy(instrument_id='EOS-USDT', size=1, price=3)
 # 现价单撤销
-# result = SpotBusiness.revoke_buy(instrument_id='EOS-USDT', order_id='4998079771797504')
-# 市价单下单
-# result = SpotBusiness.take_order_buy(instrument_id='EOS-USDT', notional=1)
+# result = SpotBusiness.revoke_order(instrument_id='EOS-USDT', order_id='5002699322376192')
+# 限价单卖出
+# result = SpotBusiness.make_order_sell(instrument_id='EOS-USDT', size=1, price=2.8)
 
-
-print(result)
-exit()
+# 永续合约
+# 下单
+# result = SwapBusiness
+#
+# print(result)
+# exit()
 
 #############################################################################
 from lib.api.okex.account_api import AccountApi
@@ -46,9 +53,12 @@ from lib.api.okex.swap_api import SwapApi
 # result = SpotApi.get_kline('BTC-USDT')
 
 # 合约接口
+# 获取所有币种合约的账户信息，当用户没有持仓时，保证金率为10000
 # result = SwapApi.get_accounts()
+# 获取账户手续费费率
+# result = SwapApi.get_trade_fee()
 
 
-# print(result)
+print(result)
 # for item in result:
 #     print(item)
