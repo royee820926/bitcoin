@@ -72,6 +72,21 @@ class SwapApi(ApiBase):
         return cls.get_instance().set_leverage(instrument_id=instrument_id, leverage=leverage, side=side)
 
     @classmethod
+    def take_order(cls, instrument_id, type, price, size, client_oid='', order_type='0', match_price=''):
+        """
+        下单
+        :param instrument_id:
+        :param type:
+        :param price:
+        :param size:
+        :param client_oid:
+        :param order_type:
+        :param match_price:
+        :return:
+        """
+        return cls.get_instance().take_order(instrument_id, type, price, size, client_oid=client_oid, order_type=order_type, match_price=match_price)
+
+    @classmethod
     def get_trades(cls, instrument_id, after='', before='', limit=''):
         """
         公共-获取成交数据

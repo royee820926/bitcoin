@@ -21,9 +21,10 @@ from lib.api.business.swap_business import SwapBusiness
 # 永续合约
 # 下单
 # result = SwapBusiness
-#
+
 # print(result)
 # exit()
+
 
 #############################################################################
 from lib.api.okex.account_api import AccountApi
@@ -50,7 +51,7 @@ from lib.api.okex.swap_api import SwapApi
 # result = SpotApi.get_one_coin_info('EOS-USDT')
 # result = SpotApi.get_all_ticker()
 # result = SpotApi.get_one_ticker('EOS-USDT')
-# result = SpotApi.get_kline('BTC-USDT')
+# result = SpotApi.get_kline('EOS-USDT')
 
 # 合约接口
 # 获取所有币种合约的账户信息，当用户没有持仓时，保证金率为10000
@@ -59,6 +60,6 @@ from lib.api.okex.swap_api import SwapApi
 # result = SwapApi.get_trade_fee()
 
 
-print(result)
+# print(result)
 # for item in result:
 #     print(item)
