@@ -80,8 +80,8 @@ class Testing:
         min_rsi6 = df5t[20:]['rsi6'].min(axis=0)
         df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
 
-        print(df5t)
-        exit()
+        # print(df5t)
+        # exit()
         # 从signal == 1处开始遍历DataFrame
         from_index = df5t.loc[df5t['signal'] == 1].index
 
