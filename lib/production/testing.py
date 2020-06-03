@@ -4,6 +4,8 @@ import time
 from lib.common import TimeOperation
 from lib.api.okex.swap_api import SwapApi
 import pandas as pd
+import talib as ta
+
 from lib.pandas_module import PandasModule
 from config.swap_coin import swap_coin_type
 from lib.strategy.long_position import LongPositionStrategy as lps
@@ -67,6 +69,11 @@ class Testing:
         EmaIndicator.get_value(df=df5t, ema_name='ema144')
         # RSI6
         RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
+        # RSI12
+        RsiIndicator.get_value(df=df5t, rsi_name='rsi12')
+
+        # 形态
+        kform = ta.CDLHAMMER(df5t['open'], df5t['high'], df5t['low'], df5t['close'])
 
         # 去除rsi开头的空行
         df5t.dropna(axis=0, how='any', inplace=True)
@@ -80,8 +87,8 @@ class Testing:
         min_rsi6 = df5t[20:]['rsi6'].min(axis=0)
         df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
 
-        # print(df5t)
-        # exit()
+        print(df5t)
+        exit()
         # 从signal == 1处开始遍历DataFrame
         from_index = df5t.loc[df5t['signal'] == 1].index
 

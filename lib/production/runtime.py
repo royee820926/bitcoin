@@ -13,8 +13,17 @@ class Runtime:
     # DataFrame
     __df = None
 
-    def __init__(self, instrument_id, df):
-        self.__instrument_id = instrument_id
-        self.__df = df
+    # def __init__(self, instrument_id, df):
+    #     self.__instrument_id = instrument_id
+    #     self.__df = df
+
+    @classmethod
+    def k_line_form(cls, df):
+        """
+        K线形态
+        :param df:
+        :return:
+        """
+
 
 
