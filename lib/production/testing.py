@@ -1,5 +1,6 @@
 # encoding=utf-8
 
+import time
 from lib.common import TimeOperation
 from lib.api.okex.swap_api import SwapApi
 import pandas as pd
@@ -9,13 +10,16 @@ from lib.strategy.long_position import LongPositionStrategy as lps
 from lib.strategy.long_selling import LongSellingStrategy as lss
 
 from lib.pandas_module import PandasModule
+from lib.indicator.ema_indicator import EmaIndicator
 from lib.indicator.rsi_indicator import RsiIndicator
+from lib.indicator.obv_indicator import ObvIndicator
 
 
 class Testing:
     """
     实盘生产环境
     """
+
     @classmethod
     def run(cls):
         """
@@ -29,7 +33,11 @@ class Testing:
         # 指定合约数据类型
         instrument_id = 'BCH-USD-SWAP'
         # 获取2天的分钟K线数据（默认2天）
-        df = cls.get_data(instrument_id)
+        # df = cls.get_data(instrument_id)
+
+        # datetime_str = TimeOperation.timestamp2string(time.time() - 2 * 86400)
+        datetime_str = '2020-01-05 18:00:00'
+        df = cls.get_data(instrument_id, start_time=datetime_str)
 
         # 取最后一条的时间，作为后续读取的时间
         last_one = df.iloc[len(df)-1]
@@ -55,29 +63,38 @@ class Testing:
         df5t = PandasModule.resample(df=df, rule_type=rule_type)
 
         # 产生交易信号
+        # EMA144
+        EmaIndicator.get_value(df=df5t, ema_name='ema144')
         # RSI6
         RsiIndicator.get_value(df=df5t, rsi_name='rsi6')
+
         # 去除rsi开头的空行
         df5t.dropna(axis=0, how='any', inplace=True)
         # df5t = df5t[df5t['rsi6'].notnull()]
 
+        # print(df5t)
+        # exit()
 
         # 找出rsi最低点，设为买入价格的初始值
-        min_rsi6 = df5t['rsi6'].min(axis=0)
+        # 由于rsi前面的部分误差较大，所以从20条以后取值
+        min_rsi6 = df5t[20:]['rsi6'].min(axis=0)
         df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
 
-        # 从signal == 1处开始遍历
-        # 遍历DataFrame，查找K线相关的支撑和形态
+        print(df5t)
+        exit()
+        # 从signal == 1处开始遍历DataFrame
         from_index = df5t.loc[df5t['signal'] == 1].index
-        # last_index = df5t.iloc[-1]
 
+        # print(df5t)
+        # exit()
         # 遍历后续的K线
         alpha = 0
         while True:
             alpha += 1
             next_row = df5t.loc[from_index + alpha]
 
-            # print(next_row)
+            print(next_row['candle_begin_time'])
+            print(float(next_row['open']))
             exit()
 
         print(from_index + 2)

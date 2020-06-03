@@ -5,13 +5,13 @@ from lib.api.okex.account_api import AccountApi
 from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.index_api import IndexApi
 import math
+
+
 # 计算资金收益
-
-
 # from lib.common import FundCalculator as fc
 # lg = fc.long_leverage_income(in_price=9, out_price=10, fund=100, leverage_rate=2)
 # print(lg)
-# st = fc.short_leverage_income(in_price=9, out_price=8, fund=100, leverage_rate=2)
+# st = fc.short_leverage_income(in_price=251.35, out_price=248.52, fund=100, leverage_rate=20)
 # print(st)
 # exit()
 
@@ -96,14 +96,14 @@ import math
 ###############
 # Logger 日志 #
 ###############
-import os
-import logging
-from lib.logger import Logger
-root_path = os.path.dirname(os.path.realpath(__file__))
-config = {
-    'root_path': root_path
-}
-logger = Logger(log_name='main', config=config, log_level=logging.INFO)
-logger.log('%s passing in %s' % ('coin_name', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(1234567890))))
+# import os
+# import logging
+# from lib.logger import Logger
+# root_path = os.path.dirname(os.path.realpath(__file__))
+# config = {
+#     'root_path': root_path
+# }
+# logger = Logger(log_name='main', config=config, log_level=logging.INFO)
+# logger.log('%s passing in %s' % ('coin_name', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(1234567890))))
 
 

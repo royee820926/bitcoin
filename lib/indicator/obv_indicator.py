@@ -8,12 +8,8 @@ class ObvIndicator:
     @classmethod
     def get_value(cls, df):
         """
-        获取能量潮指标
+        获取能量潮指标（和okex有出入）
         :return:
         """
-        # m = 30
-        # df.loc[df['close'] > df['close'].shift(1), 'obv_va'] = df['volume']
-        # df.loc[df['close'] < df['close'].shift(1), 'obv_va'] = -df['volume']
-        # df['obvta'] = ta.OBV(df['close'], df['volume'])
-
+        df['obv'] = ta.OBV(df['close'], df['volume'])
 
