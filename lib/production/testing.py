@@ -41,12 +41,12 @@ class Testing:
         datetime_str = '2020-01-05 18:00:00'
         df = cls.get_data(instrument_id, start_time=datetime_str)
 
-        # 取最后一条的时间，作为后续读取的时间
-        last_one = df.iloc[len(df)-1]
-        last_time = last_one['candle_begin_time']
-        # 时间戳
-        last_timestamp = TimeOperation.string2timestamp(str(last_time), '%Y-%m-%d %H:%M:%S')
-        next_timestamp = last_timestamp + 60
+        # # 取最后一条的时间，作为后续读取的时间
+        # last_one = df.iloc[len(df)-1]
+        # last_time = last_one['candle_begin_time']
+        # # 时间戳
+        # last_timestamp = TimeOperation.string2timestamp(str(last_time), '%Y-%m-%d %H:%M:%S')
+        # next_timestamp = last_timestamp + 60
 
         # # 添加下一分钟的数据
         # df = cls.append_one_swap_from_mongo(instrument_id, df=df, start_time=next_timestamp)
@@ -72,23 +72,19 @@ class Testing:
         # RSI12
         RsiIndicator.get_value(df=df5t, rsi_name='rsi12')
 
-        # 形态
-        kform = ta.CDLHAMMER(df5t['open'], df5t['high'], df5t['low'], df5t['close'])
-
         # 去除rsi开头的空行
         df5t.dropna(axis=0, how='any', inplace=True)
         # df5t = df5t[df5t['rsi6'].notnull()]
 
         # print(df5t)
         # exit()
-
         # 找出rsi最低点，设为买入价格的初始值
         # 由于rsi前面的部分误差较大，所以从20条以后取值
         min_rsi6 = df5t[20:]['rsi6'].min(axis=0)
         df5t.loc[df5t['rsi6'] == min_rsi6, 'signal'] = 1
 
-        print(df5t)
-        exit()
+        # print(df5t)
+        # exit()
         # 从signal == 1处开始遍历DataFrame
         from_index = df5t.loc[df5t['signal'] == 1].index
 

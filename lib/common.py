@@ -105,6 +105,7 @@ class FundCalculator:
     """
     资金计算
     """
+    # 杠杆费率
     __leverage_charge_rate = 0.0005
 
     @classmethod
