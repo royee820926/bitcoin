@@ -6,12 +6,7 @@ from lib.api.okex.spot_api import SpotApi
 from lib.api.okex.index_api import IndexApi
 import math
 
-# 形态
-import talib as ta
-result = ta.CDLHAMMER(1, 2, 3, 4)
 
-print(result)
-exit()
 
 
 # 计算资金收益

@@ -15,12 +15,12 @@ class Runtime:
     __instrument_id = ''
     # DataFrame
     __original_data_frame = None
-    __5t_data_frame = None
+    __level_data_frame = {}
+    __level_list = []
 
 
-    def __init__(self, instrument_id, data_frame):
+    def __init__(self, instrument_id):
         self.__instrument_id = instrument_id
-        self.__original_data_frame = data_frame
 
     def get_data_frame(self):
         """
@@ -29,25 +29,53 @@ class Runtime:
         """
         return self.__original_data_frame
 
-    def set_data_frame(self, df, deep=False):
+    def set_data_frame(self, df, level_list=[], deep=False):
         """
         原始DataFrame
         :param df:
+        :param level_list: 例如：['5T']
         :param deep:
         :return:
         """
         self.__original_data_frame = df.copy(deep=deep)
+        # 设置其他级别
+        if bool(level_list):
+            for level_type in level_list:
+                self.set_level_data_frame(level_type, df)
 
-    def get_5t_data_frame(self):
+    def get_level_data_frame(self, rule_type):
         """
-        获取5分钟级别的DataFrame
+        获取时间级别DataFrame
+        :param rule_type:
         :return:
         """
-        if self.__5t_data_frame is None:
-            if self.__original_data_frame is None:
-                raise Exception('Original data frame is none.')
-            self.__5t_data_frame = PandasModule.resample(df=self.__original_data_frame, rule_type='5T')
-        return self.__5t_data_frame
+        if rule_type in self.__level_data_frame:
+            return self.__level_data_frame[rule_type]
+        return None
+
+    def set_level_data_frame(self, rule_type, df):
+        """
+        设置时间级别的DataFrame
+        :param rule_type: 例如：5T
+        :param df:
+        :return:
+        """
+        self.__level_data_frame[rule_type] = PandasModule.resample(df=df, rule_type=rule_type)
+
+    def start(self):
+        """
+        开始循环判断
+        :return:
+        """
+        # 当前索引
+        current_index = 0
+        df = self.get_level_data_frame('5T')
+        for item in df.iterrows():
+            current_index = int(item[0])
+            break
+        while True:
+            item = df.iloc[current_index]
+
 
 
 

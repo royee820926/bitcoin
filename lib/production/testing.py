@@ -14,7 +14,7 @@ from lib.strategy.long_selling import LongSellingStrategy as lss
 from lib.pandas_module import PandasModule
 from lib.indicator.ema_indicator import EmaIndicator
 from lib.indicator.rsi_indicator import RsiIndicator
-from lib.indicator.obv_indicator import ObvIndicator
+from lib.production.runtime import Runtime
 
 
 class Testing:
@@ -38,8 +38,34 @@ class Testing:
         # df = cls.get_data(instrument_id)
 
         # datetime_str = TimeOperation.timestamp2string(time.time() - 2 * 86400)
+        level_df = {'5T': None}
+        # 转换为list
+        level_list = list(level_df.keys())
+
         datetime_str = '2020-01-05 18:00:00'
         df = cls.get_data(instrument_id, start_time=datetime_str)
+
+        rt = Runtime(instrument_id)
+        # 设置DataFrame，并安装level_list列表重采样
+        rt.set_data_frame(df, level_list)
+        # 计算指标
+        for level_type in level_list:
+            level_df[level_type] = rt.get_level_data_frame(level_type)
+            # EMA144
+            EmaIndicator.get_value(df=level_df[level_type], ema_name='ema144')
+            # RSI6
+            RsiIndicator.get_value(df=level_df[level_type], rsi_name='rsi6')
+            # RSI12
+            RsiIndicator.get_value(df=level_df[level_type], rsi_name='rsi12')
+
+            # 去除rsi开头的空行
+            level_df[level_type].dropna(axis=0, how='any', inplace=True)
+
+        # 进入循环
+        rt.start()
+
+
+
 
         # # 取最后一条的时间，作为后续读取的时间
         # last_one = df.iloc[len(df)-1]
